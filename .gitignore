@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Uploads de usuarios
+/public/uploads/
+
+echo "" >> .gitignore
+echo "# Uploads de usuarios" >> .gitignore
+echo "/public/uploads/" >> .gitignore
