@@ -1,4 +1,5 @@
 import { getEstructuraCompleta } from '@/lib/queries';
+import Link from 'next/link';
 
 export default async function Home() {
   const secciones = await getEstructuraCompleta();
@@ -48,16 +49,18 @@ export default async function Home() {
 
                   <ul className="space-y-1.5 mt-4">
                     {area.subareas.map((sub) => (
-                      <li
-                        key={sub.id}
-                        className="text-sm text-slate-600 flex items-start gap-2"
-                      >
-                        <span className="text-slate-400 mt-0.5">•</span>
-                        <span className="flex-1">{sub.nombre}</span>
-                        <span className="text-slate-400 text-xs whitespace-nowrap">
-                          {sub.totalReactivos}
-                        </span>
-                      </li>
+                    <li key={sub.id}>
+  <a
+    href={`/subarea/${sub.slug}`}
+    className="text-sm text-slate-600 hover:text-blue-600 flex items-start gap-2 group py-0.5"
+  >
+    <span className="text-slate-400 mt-0.5 group-hover:text-blue-600">•</span>
+    <span className="flex-1 group-hover:underline">{sub.nombre}</span>
+    <span className="text-slate-400 text-xs whitespace-nowrap">
+      {sub.totalReactivos}
+    </span>
+  </a>
+</li>
                     ))}
                   </ul>
                 </div>

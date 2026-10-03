@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { secciones, areas, subareas } from '@/db/schema';
+import { secciones, areas, subareas, preguntas } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
 
 export async function getEstructuraCompleta() {
@@ -28,4 +28,28 @@ export async function getEstructuraCompleta() {
       })),
     };
   });
+}
+
+export async function getSubareaPorSlug(slug: string) {
+  const [subarea] = await db
+    .select()
+    .from(subareas)
+    .where(eq(subareas.slug, slug))
+    .limit(1);
+
+  if (!subarea) return null;
+
+  const [area] = await db
+    .select()
+    .from(areas)
+    .where(eq(areas.id, subarea.areaId))
+    .limit(1);
+
+  const preguntasDeSubarea = await db
+    .select()
+    .from(preguntas)
+    .where(eq(preguntas.subareaId, subarea.id))
+    .orderBy(asc(preguntas.id));
+
+  return { subarea, area, preguntas: preguntasDeSubarea };
 }
