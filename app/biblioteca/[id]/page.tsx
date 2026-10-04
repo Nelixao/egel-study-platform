@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { documentos, areas } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import GenerarPreguntas from './GenerarPreguntas';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -76,10 +77,7 @@ export default async function DocumentoPage({ params }: Props) {
 
           {doc.textoExtraido ? (
             <>
-              <pre className="whitespace-pre-wrap text-sm text-slate-700 font-sans leading-relaxed max-h-96 overflow-y-auto bg-slate-50 rounded-lg p-4 border border-slate-100">
-                {preview}
-                {doc.textoExtraido.length > 3000 && '\n\n...'}
-              </pre>
+              <pre className="whitespace-pre-wrap text-sm text-slate-700 font-sans leading-relaxed max-h-96 overflow-y-auto bg-slate-50 rounded-lg p-4 border border-slate-100">{preview}{doc.textoExtraido.length > 3000 && '\n\n...'}</pre>
               <p className="text-xs text-slate-400 mt-3">
                 Mostrando los primeros 3000 caracteres del texto extraído.
               </p>
@@ -92,19 +90,7 @@ export default async function DocumentoPage({ params }: Props) {
           )}
         </section>
 
-        <section className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">
-            Generar preguntas automáticamente
-          </h3>
-          <p className="text-sm text-blue-700 mb-4">
-            Esta función estará disponible próximamente. Cuando la actives,
-            podrás generar preguntas de opción múltiple a partir del texto
-            extraído usando IA.
-          </p>
-          <span className="inline-block text-xs font-medium bg-blue-200 text-blue-800 px-3 py-1 rounded-full">
-            En desarrollo
-          </span>
-        </section>
+              <GenerarPreguntas documentoId={doc.id} />
       </div>
     </main>
   );

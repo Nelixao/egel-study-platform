@@ -141,9 +141,12 @@ export default async function Home() {
                     className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <h4 className="font-semibold text-slate-900 leading-tight">
+                      <Link
+                        href={`/area/${area.slug}`}
+                        className="font-semibold text-slate-900 leading-tight hover:text-blue-600 transition-colors block"
+                      >
                         {area.nombre}
-                      </h4>
+                      </Link>
                       <span className="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-full whitespace-nowrap ml-2">
                         {area.totalReactivos}
                       </span>

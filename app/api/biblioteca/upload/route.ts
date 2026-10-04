@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     // Extraer texto
     let textoExtraido = '';
     try {
-      const pdfParse = (await import('pdf-parse')).default;
+      const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
       const resultado = await pdfParse(buffer);
       textoExtraido = resultado.text || '';
     } catch (err) {

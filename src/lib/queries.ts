@@ -53,3 +53,27 @@ export async function getSubareaPorSlug(slug: string) {
 
   return { subarea, area, preguntas: preguntasDeSubarea };
 }
+
+export async function getAreaPorSlug(slug: string) {
+  const [area] = await db
+    .select()
+    .from(areas)
+    .where(eq(areas.slug, slug))
+    .limit(1);
+
+  if (!area) return null;
+
+  const subareasDelArea = await db
+    .select()
+    .from(subareas)
+    .where(eq(subareas.areaId, area.id))
+    .orderBy(asc(subareas.id));
+
+  const [seccion] = await db
+    .select()
+    .from(secciones)
+    .where(eq(secciones.id, area.seccionId!))
+    .limit(1);
+
+  return { area, subareas: subareasDelArea, seccion };
+}

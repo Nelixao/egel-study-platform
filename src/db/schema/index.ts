@@ -21,6 +21,7 @@ export const areas = pgTable('areas', {
   seccionId: integer('seccion_id').references(() => secciones.id),
   nombre: text('nombre').notNull(),
   slug: text('slug').notNull().unique(),
+  descripcion: text('descripcion'),
   orden: integer('orden').notNull(),
   totalReactivos: integer('total_reactivos').notNull(),
 });
@@ -30,9 +31,11 @@ export const subareas = pgTable('subareas', {
   areaId: integer('area_id').references(() => areas.id, { onDelete: 'cascade' }),
   nombre: text('nombre').notNull(),
   slug: text('slug').notNull(),
+  descripcion: text('descripcion'),
+  temas: text('temas'), // temas separados por saltos de línea
+  videoUrl: text('video_url'),
   totalReactivos: integer('total_reactivos').notNull(),
 });
-
 export const documentos = pgTable('documentos', {
   id: serial('id').primaryKey(),
   titulo: text('titulo').notNull(),
@@ -64,5 +67,13 @@ export const preguntas = pgTable('preguntas', {
   explicacion: text('explicacion'),
   dificultad: text('dificultad').default('media'),
   esBorrador: boolean('es_borrador').default(true),
+  creadoEn: timestamp('creado_en').defaultNow(),
+});
+export const lecciones = pgTable('lecciones', {
+  id: serial('id').primaryKey(),
+  subareaId: integer('subarea_id').references(() => subareas.id, { onDelete: 'cascade' }),
+  titulo: text('titulo').notNull(),
+  contenido: text('contenido').notNull(),
+  orden: integer('orden').notNull().default(0),
   creadoEn: timestamp('creado_en').defaultNow(),
 });
