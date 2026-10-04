@@ -1,37 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Simulador EGEL ICOMPU
 
-## Getting Started
+> Plataforma de estudio abierta y sin fines de lucro para la preparación del **EGEL Plus ICOMPU** (Ingeniería Computacional).
 
-First, run the development server:
+## 🎯 Acerca del proyecto
+
+Este proyecto nace como una herramienta de estudio personal y de código abierto para ayudar a estudiantes de ingeniería computacional a prepararse para el examen de titulación EGEL Plus ICOMPU de Ceneval.
+
+Ofrece lecciones teóricas, banco de preguntas, simuladores con cronómetro y una biblioteca de recursos, todo bajo una interfaz moderna inspirada en iOS.
+
+## ✨ Funcionalidades
+
+- 📚 **Lecciones** estilo Khan Academy con markdown enriquecido
+- 🎯 **Simulador** de exámenes con cronómetro y resultados detallados
+- 📝 **Banco de preguntas** con generación asistida por IA (Groq)
+- 📄 **Biblioteca** de recursos con extracción de texto de PDFs
+- 🎥 **Videos** embebidos por subárea
+- 🎨 **Diseño iOS** con glass morphism y animaciones sutiles
+
+## ⚠️ Aviso importante
+
+Este sitio es un **proyecto independiente** con fines **exclusivamente educativos**.
+
+**NO está afiliado, respaldado ni patrocinado por Ceneval** ni por ninguna institución educativa. Las preguntas y contenidos son de elaboración propia y **no constituyen material oficial** del examen.
+
+El uso de esta plataforma **no garantiza la aprobación del examen**. Los resultados dependen exclusivamente del estudio y desempeño de cada usuario.
+
+## 🛠️ Stack tecnológico
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Next.js 16 (App Router), React 19, TypeScript |
+| Estilos | Tailwind CSS 4 |
+| Base de datos | PostgreSQL + Drizzle ORM |
+| IA | Groq (Llama 3.3) |
+| Deploy | Vercel |
+
+## 🚀 Instalación local
 
 ```bash
+# 1. Clonar
+git clone https://github.com/Nelixao/egel-study-platform.git
+cd egel-study-platform
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env.local
+# Edita .env.local con tus credenciales
+
+# 4. Aplicar schema a la base de datos
+npm run db:push
+
+# 5. Cargar datos iniciales
+npm run db:seed
+npm run db:seed-descripciones
+
+# 6. Arrancar
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# egel-study-platform
