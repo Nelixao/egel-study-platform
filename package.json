@@ -15,6 +15,7 @@
     "db:seed-descripciones": "dotenv -e .env.local -- tsx src/db/seed-descripciones.ts"
   },
   "dependencies": {
+    "cloudinary": "^2.11.0",
     "drizzle-orm": "^0.45.3",
     "next": "16.3.8",
     "pdf-parse": "^1.1.1",

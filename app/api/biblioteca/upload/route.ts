@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
 import { db } from '@/db';
 import { documentos } from '@/db/schema';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,16 +33,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Máximo 50 MB' }, { status: 400 });
     }
 
-    // Guardar el archivo en public/uploads
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadsDir, { recursive: true });
-
-    const nombreSeguro = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const rutaFisica = path.join(uploadsDir, nombreSeguro);
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(rutaFisica, buffer);
 
-    // Extraer texto
+    // 1. Subir a Cloudinary
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: 'raw',
+          folder: 'egel-study-platform',
+          public_id: `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(buffer);
+    });
+
+    const archivoUrl = uploadResult.secure_url;
+
+    // 2. Extraer texto
     let textoExtraido = '';
     try {
       const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
@@ -47,14 +64,14 @@ export async function POST(request: NextRequest) {
       textoExtraido = '';
     }
 
-    // Guardar en la base de datos
+    // 3. Guardar en base de datos
     const [doc] = await db
       .insert(documentos)
       .values({
         titulo,
         autor: autor || null,
         areaId: areaId ? Number(areaId) : null,
-        archivoUrl: `/uploads/${nombreSeguro}`,
+        archivoUrl,
         textoExtraido,
       })
       .returning();
