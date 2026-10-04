@@ -67,8 +67,7 @@ export default async function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <Link
             href="/simulador"
-            className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-blue-400 hover:shadow-lg transition-all group"
-          >
+            className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-blue-400 hover:shadow-lg transition-all group">
             <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
               <span className="text-xl">⏱️</span>
             </div>
