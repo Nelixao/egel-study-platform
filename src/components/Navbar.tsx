@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { cerrarSesion } from '@/app/actions/auth';
 
 const links = [
   { href: '/', label: 'Inicio' },
@@ -39,11 +40,10 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3.5 py-1.5 text-sm rounded-full transition-all font-medium ${
-                    activo
+                  className={`px-3.5 py-1.5 text-sm rounded-full transition-all font-medium ${activo
                       ? 'bg-white text-black shadow-sm'
                       : 'text-black/60 hover:text-black'
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -61,6 +61,28 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
+            <form action={cerrarSesion}>
+              <button
+                type="submit"
+                className="hidden md:inline-flex items-center gap-1.5 text-sm text-black/60 hover:text-[#FF3B30] px-3 py-2 rounded-full transition-colors"
+                title="Cerrar sesión"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                Salir
+              </button>
+            </form>
 
             <button
               onClick={() => setMenuAbierto(!menuAbierto)}
@@ -90,11 +112,10 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuAbierto(false)}
-                  className={`block px-4 py-2.5 text-sm rounded-xl transition-colors font-medium ${
-                    activo
+                  className={`block px-4 py-2.5 text-sm rounded-xl transition-colors font-medium ${activo
                       ? 'bg-[#007AFF]/10 text-[#007AFF]'
                       : 'text-black/70 hover:bg-black/5'
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
