@@ -27,7 +27,7 @@ export default function LoginPage() {
     if (resultado?.error) {
       setError('Credenciales incorrectas');
     } else {
-      router.push('/admin/preguntas');
+      router.push('/admin');
       router.refresh();
     }
   }
