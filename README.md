@@ -1,23 +1,39 @@
-# Simulador EGEL ICOMPU
 
-> Plataforma de estudio abierta y sin fines de lucro para la preparación del **EGEL Plus ICOMPU** (Ingeniería Computacional).
+# EGEL ICOMPU
 
-##  Acerca del proyecto
+> Plataforma de estudio abierta para la preparación del **EGEL Plus ICOMPU** (Ingeniería Computacional) de Ceneval.
 
-Este proyecto nace como una herramienta de estudio personal y de código abierto para ayudar a estudiantes de ingeniería computacional a prepararse para el examen de titulación EGEL Plus ICOMPU de Ceneval.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=flat-square&logo=postgresql)](https://www.postgresql.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-Ofrece lecciones teóricas, banco de preguntas, simuladores con cronómetro y una biblioteca de recursos, todo bajo una interfaz moderna inspirada en iOS.
+---
+
+## Acerca del proyecto
+
+Plataforma de estudio diseñada para estudiantes de ingeniería computacional que se preparan para el examen de titulación EGEL Plus ICOMPU. Combina teoría, práctica y evaluación en una sola herramienta.
+
+**Demo en vivo:** *próximamente*
+
+---
 
 ## Funcionalidades
 
-- **Lecciones** estilo Khan Academy con markdown enriquecido
-- **Simulador** de exámenes con cronómetro y resultados detallados
-- **Banco de preguntas** con generación asistida por IA (Groq)
-- **Biblioteca** de recursos con extracción de texto de PDFs
-- **Videos** embebidos por subárea
-- **Diseño iOS** con glass morphism y animaciones sutiles
+| Módulo | Descripción |
+| :--- | :--- |
+| **Temario interactivo** | Estructura completa del examen con seguimiento de progreso |
+| **Lecciones** | Contenido teórico en markdown por subárea |
+| **Simulador** | Exámenes cronometrados con preguntas aleatorias y opciones barajadas |
+| **Banco de preguntas** | Flashcards interactivas con explicación de cada respuesta |
+| **Biblioteca** | Subida de PDFs con extracción de texto automática |
+| **Generación con IA** | Preguntas generadas desde PDFs con revisión humana |
+| **Panel de admin** | CRUD completo de lecciones, preguntas y documentos |
+| **Autenticación** | Rutas de administración protegidas con Auth.js |
 
-##  Aviso importante
+---
+
+## Aviso importante
 
 Este sitio es un **proyecto independiente** con fines **exclusivamente educativos**.
 
@@ -25,36 +41,63 @@ Este sitio es un **proyecto independiente** con fines **exclusivamente educativo
 
 El uso de esta plataforma **no garantiza la aprobación del examen**. Los resultados dependen exclusivamente del estudio y desempeño de cada usuario.
 
-##  Stack tecnológico
+---
+
+## Stack tecnológico
 
 | Capa | Tecnología |
-|------|-----------|
-| Frontend | Next.js 16 (App Router), React 19, TypeScript |
+| :--- | :--- |
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Lenguaje | TypeScript |
 | Estilos | Tailwind CSS 4 |
-| Base de datos | PostgreSQL + Drizzle ORM |
-| IA | Groq (Llama 3.3) |
-| Deploy | Vercel |
+| Base de datos | PostgreSQL 16 + Drizzle ORM |
+| Autenticación | Auth.js (NextAuth v5) |
+| IA | Groq API (GPT-OSS 120B) |
+| Almacenamiento | Cloudinary |
+| Markdown | react-markdown + remark-gfm |
 
-##  Instalación local
+---
+
+## Estructura del proyecto
+egel-study-platform/
+├── app/ # Rutas de Next.js
+│ ├── admin/ # Panel de administración (protegido)
+│ ├── api/ # API Routes
+│ ├── area/ # Páginas por área
+│ ├── banco/ # Banco de preguntas con flashcards
+│ ├── biblioteca/ # Biblioteca de documentos
+│ ├── legal/ # Términos, privacidad, cookies
+│ ├── login/ # Página de login
+│ ├── simulador/ # Simulador de exámenes
+│ ├── subarea/ # Páginas por subárea
+│ └── temario/ # Temario interactivo
+├── src/
+│ ├── app/actions/ # Server Actions
+│ ├── components/ # Componentes reutilizables
+│ ├── db/ # Drizzle ORM
+│ └── lib/queries.ts # Queries reutilizables
+├── public/ # Assets estáticos
+└── proxy.ts # Middleware de auth
+---
+
+## Instalación local
+
+### Requisitos
+
+- Node.js 20.9 o superior
+- PostgreSQL 16
+- Cuenta en Groq (gratis)
+- Cuenta en Cloudinary (gratis)
+
+### Pasos
 
 ```bash
-# 1. Clonar
 git clone https://github.com/Nelixao/egel-study-platform.git
 cd egel-study-platform
-
-# 2. Instalar dependencias
-npm install
-
-# 3. Configurar variables de entorno
+npm install --legacy-peer-deps
 cp .env.example .env.local
 # Edita .env.local con tus credenciales
-
-# 4. Aplicar schema a la base de datos
 npm run db:push
-
-# 5. Cargar datos iniciales
 npm run db:seed
-npm run db:seed-descripciones
-
-# 6. Arrancar
+npm run db:seed-preguntas
 npm run dev
