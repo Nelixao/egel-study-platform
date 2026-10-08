@@ -1,47 +1,31 @@
-
 # EGEL ICOMPU
 
-> Plataforma de estudio abierta para la preparación del **EGEL Plus ICOMPU** (Ingeniería Computacional) de Ceneval.
-
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=flat-square&logo=postgresql)](https://www.postgresql.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-
----
+> Plataforma de estudio abierta para la preparación del EGEL Plus ICOMPU (Ingeniería Computacional) de Ceneval.
 
 ## Acerca del proyecto
 
 Plataforma de estudio diseñada para estudiantes de ingeniería computacional que se preparan para el examen de titulación EGEL Plus ICOMPU. Combina teoría, práctica y evaluación en una sola herramienta.
 
-**Demo en vivo:** *próximamente*
-
----
-
 ## Funcionalidades
 
 | Módulo | Descripción |
 | :--- | :--- |
-| **Temario interactivo** | Estructura completa del examen con seguimiento de progreso |
-| **Lecciones** | Contenido teórico en markdown por subárea |
-| **Simulador** | Exámenes cronometrados con preguntas aleatorias y opciones barajadas |
-| **Banco de preguntas** | Flashcards interactivas con explicación de cada respuesta |
-| **Biblioteca** | Subida de PDFs con extracción de texto automática |
-| **Generación con IA** | Preguntas generadas desde PDFs con revisión humana |
-| **Panel de admin** | CRUD completo de lecciones, preguntas y documentos |
-| **Autenticación** | Rutas de administración protegidas con Auth.js |
-
----
+| Temario interactivo | Estructura completa del examen con seguimiento de progreso |
+| Lecciones | Contenido teórico en markdown por subárea |
+| Simulador | Exámenes cronometrados con preguntas aleatorias y opciones barajadas |
+| Banco de preguntas | Flashcards interactivas con explicación de cada respuesta |
+| Biblioteca | Subida de PDFs con extracción de texto automática |
+| Generación con IA | Preguntas generadas desde PDFs con revisión humana |
+| Panel de admin | CRUD completo de lecciones, preguntas y documentos |
+| Autenticación | Rutas de administración protegidas con Auth.js |
 
 ## Aviso importante
 
-Este sitio es un **proyecto independiente** con fines **exclusivamente educativos**.
+Este sitio es un proyecto independiente con fines exclusivamente educativos.
 
-**NO está afiliado, respaldado ni patrocinado por Ceneval** ni por ninguna institución educativa. Las preguntas y contenidos son de elaboración propia y **no constituyen material oficial** del examen.
+NO está afiliado, respaldado ni patrocinado por Ceneval ni por ninguna institución educativa. Las preguntas y contenidos son de elaboración propia y no constituyen material oficial del examen.
 
-El uso de esta plataforma **no garantiza la aprobación del examen**. Los resultados dependen exclusivamente del estudio y desempeño de cada usuario.
-
----
+El uso de esta plataforma no garantiza la aprobación del examen. Los resultados dependen exclusivamente del estudio y desempeño de cada usuario.
 
 ## Stack tecnológico
 
@@ -56,29 +40,23 @@ El uso de esta plataforma **no garantiza la aprobación del examen**. Los result
 | Almacenamiento | Cloudinary |
 | Markdown | react-markdown + remark-gfm |
 
----
-
 ## Estructura del proyecto
-egel-study-platform/
-├── app/ # Rutas de Next.js
-│ ├── admin/ # Panel de administración (protegido)
-│ ├── api/ # API Routes
-│ ├── area/ # Páginas por área
-│ ├── banco/ # Banco de preguntas con flashcards
-│ ├── biblioteca/ # Biblioteca de documentos
-│ ├── legal/ # Términos, privacidad, cookies
-│ ├── login/ # Página de login
-│ ├── simulador/ # Simulador de exámenes
-│ ├── subarea/ # Páginas por subárea
-│ └── temario/ # Temario interactivo
-├── src/
-│ ├── app/actions/ # Server Actions
-│ ├── components/ # Componentes reutilizables
-│ ├── db/ # Drizzle ORM
-│ └── lib/queries.ts # Queries reutilizables
-├── public/ # Assets estáticos
-└── proxy.ts # Middleware de auth
----
+
+- app/ - Rutas de Next.js
+- app/admin/ - Panel de administración (protegido)
+- app/api/ - API Routes
+- app/area/ - Páginas por área
+- app/banco/ - Banco de preguntas con flashcards
+- app/biblioteca/ - Biblioteca de documentos
+- app/legal/ - Términos, privacidad, cookies
+- app/login/ - Página de login
+- app/simulador/ - Simulador de exámenes
+- app/subarea/ - Páginas por subárea
+- app/temario/ - Temario interactivo
+- src/app/actions/ - Server Actions
+- src/components/ - Componentes reutilizables
+- src/db/ - Drizzle ORM
+- src/lib/queries.ts - Queries reutilizables
 
 ## Instalación local
 
@@ -91,13 +69,66 @@ egel-study-platform/
 
 ### Pasos
 
-```bash
-git clone https://github.com/Nelixao/egel-study-platform.git
-cd egel-study-platform
-npm install --legacy-peer-deps
-cp .env.example .env.local
-# Edita .env.local con tus credenciales
-npm run db:push
-npm run db:seed
-npm run db:seed-preguntas
-npm run dev
+1. Clonar el repositorio
+2. Instalar dependencias con npm install --legacy-peer-deps
+3. Copiar .env.example a .env.local y configurar credenciales
+4. Ejecutar npm run db:push
+5. Ejecutar npm run db:seed
+6. Ejecutar npm run db:seed-preguntas
+7. Ejecutar npm run dev
+
+## Variables de entorno
+
+- DATABASE_URL - Cadena de conexión a PostgreSQL
+- AUTH_SECRET - Secreto para Auth.js (genera con openssl rand -base64 32)
+- ADMIN_EMAIL - Correo del administrador
+- ADMIN_PASSWORD - Contraseña del administrador
+- GROQ_API_KEY - API key de Groq
+- CLOUDINARY_CLOUD_NAME - Cloud name de Cloudinary
+- CLOUDINARY_API_KEY - API key de Cloudinary
+- CLOUDINARY_API_SECRET - API secret de Cloudinary
+
+## Scripts disponibles
+
+| Comando | Descripción |
+| :--- | :--- |
+| npm run dev | Servidor de desarrollo |
+| npm run build | Build de producción |
+| npm run start | Servidor de producción |
+| npm run lint | Linter |
+| npm run db:push | Aplicar schema a la base |
+| npm run db:seed | Cargar secciones, áreas y subáreas |
+| npm run db:seed-preguntas | Cargar preguntas de ejemplo |
+
+## Estructura del EGEL Plus ICOMPU
+
+| Sección | Área | Reactivos |
+| :--- | :--- | :--- |
+| Disciplinar | Implementación de hardware | 49 |
+| Disciplinar | Implementación de redes de computadoras | 41 |
+| Disciplinar | Desarrollo de software | 50 |
+| Transversal | Comprensión lectora | 30 |
+| Transversal | Redacción indirecta | 30 |
+| Total | | 200 |
+
+## Roadmap
+
+- Temario interactivo con progreso
+- Lecciones en markdown
+- Simulador con cronómetro
+- Banco de preguntas con flashcards
+- Generación con IA
+- Autenticación y rutas protegidas
+- Deploy a Vercel + Neon (pendiente)
+- Pruebas E2E con Playwright (pendiente)
+- Dashboard de progreso del usuario (pendiente)
+- Modo de repaso espaciado (pendiente)
+
+## Licencia
+
+Este proyecto está bajo licencia MIT. Consulta LICENSE para más detalles.
+
+## Contacto
+
+- GitHub: @Nelixao
+- Repositorio: egel-study-platform
