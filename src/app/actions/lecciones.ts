@@ -31,3 +31,23 @@ export async function eliminarLeccion(id: number) {
   revalidatePath('/admin/lecciones');
   return { success: true };
 }
+export async function actualizarLeccion(formData: FormData) {
+  const id = Number(formData.get('id'));
+  const subareaId = Number(formData.get('subareaId'));
+  const titulo = formData.get('titulo') as string;
+  const contenido = formData.get('contenido') as string;
+  const orden = Number(formData.get('orden') || 0);
+
+  if (!id || !subareaId || !titulo || !contenido) {
+    return { error: 'Faltan campos obligatorios' };
+  }
+
+  await db
+    .update(lecciones)
+    .set({ subareaId, titulo, contenido, orden })
+    .where(eq(lecciones.id, id));
+
+  revalidatePath('/admin/lecciones');
+  revalidatePath('/admin/lecciones/' + id + '/editar');
+  return { success: true };
+}

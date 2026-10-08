@@ -27,7 +27,8 @@ export default async function DocumentoPage({ params }: Props) {
 
   if (!doc) notFound();
 
-  const preview = doc.textoExtraido?.slice(0, 3000) || '';
+  const textoLimpio = (doc.textoExtraido || '').trim();
+  const preview = textoLimpio.slice(0, 3000);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -63,6 +64,12 @@ export default async function DocumentoPage({ params }: Props) {
               Ver PDF original
             </a>
           )}
+          <Link
+            href={`/biblioteca/${doc.id}/editar`}
+            className="bg-black/[0.05] hover:bg-black/[0.08] text-black/70 font-medium px-5 py-2.5 rounded-lg text-sm"
+          >
+            Editar información
+          </Link>
         </div>
 
         <section className="bg-white rounded-xl border border-slate-200 p-6">
@@ -71,13 +78,13 @@ export default async function DocumentoPage({ params }: Props) {
               Texto extraído
             </h2>
             <span className="text-xs text-slate-500">
-              {doc.textoExtraido?.length.toLocaleString() || 0} caracteres
+              {textoLimpio.length.toLocaleString()} caracteres
             </span>
           </div>
 
           {doc.textoExtraido ? (
             <>
-              <pre className="whitespace-pre-wrap text-sm text-slate-700 font-sans leading-relaxed max-h-96 overflow-y-auto bg-slate-50 rounded-lg p-4 border border-slate-100">{preview}{doc.textoExtraido.length > 3000 && '\n\n...'}</pre>
+              <pre className="whitespace-pre-wrap text-sm text-slate-700 font-sans leading-relaxed max-h-96 overflow-y-auto bg-slate-50 rounded-lg p-4 border border-slate-100">{`${preview}${textoLimpio.length > 3000 ? '\n\n...' : ''}`}</pre>
               <p className="text-xs text-slate-400 mt-3">
                 Mostrando los primeros 3000 caracteres del texto extraído.
               </p>
@@ -90,7 +97,7 @@ export default async function DocumentoPage({ params }: Props) {
           )}
         </section>
 
-              <GenerarPreguntas documentoId={doc.id} />
+        <GenerarPreguntas documentoId={doc.id} />
       </div>
     </main>
   );

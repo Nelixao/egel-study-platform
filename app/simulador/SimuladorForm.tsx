@@ -32,7 +32,6 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   const [segundos, setSegundos] = useState(0);
   const intervaloRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Pre-seleccionar subárea si viene por URL
   useEffect(() => {
     const subareaParam = searchParams.get('subareas');
     if (subareaParam) {
@@ -63,12 +62,24 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     return () => {
       if (intervaloRef.current) clearInterval(intervaloRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fase]);
 
   function toggleSubarea(id: number) {
     setSubareasSel((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  }
+
+  function seleccionarTodas() {
+    const todas = estructura.flatMap((s) =>
+      s.areas.flatMap((a) => a.subareas.map((sub) => sub.id))
+    );
+    setSubareasSel(todas);
+  }
+
+  function limpiarSeleccion() {
+    setSubareasSel([]);
   }
 
   async function iniciar() {
@@ -117,7 +128,6 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     setIndice(0);
   }
 
-  // === FASE CONFIG ===
   if (fase === 'config') {
     const hayPreseleccion = subareasSel.length > 0;
 
@@ -126,16 +136,36 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
         {hayPreseleccion && (
           <div className="glass-card-strong rounded-[22px] p-5 border-l-4 border-[#007AFF] animate-slide-up">
             <p className="text-sm text-black/70">
-              ✨ Ya seleccionamos las subáreas por ti. Puedes ajustar la
-              cantidad de preguntas y el tiempo antes de comenzar.
+              Ya seleccionamos las subáreas por ti. Puedes ajustar la cantidad
+              de preguntas y el tiempo antes de comenzar.
             </p>
           </div>
         )}
 
         <section className="glass-card-strong rounded-[22px] p-6 animate-slide-up">
-          <h2 className="text-sm font-semibold text-black/70 uppercase tracking-wide mb-4">
-            Subáreas a incluir
-          </h2>
+          <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <h2 className="text-sm font-semibold text-black/70 uppercase tracking-wide">
+              Subáreas a incluir
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={seleccionarTodas}
+                className="text-xs font-semibold text-[#007AFF] hover:bg-[#007AFF]/10 px-2.5 py-1.5 rounded-lg transition-colors tap-scale"
+              >
+                Seleccionar todo
+              </button>
+              {subareasSel.length > 0 && (
+                <button
+                  type="button"
+                  onClick={limpiarSeleccion}
+                  className="text-xs font-semibold text-black/50 hover:bg-black/5 px-2.5 py-1.5 rounded-lg transition-colors tap-scale"
+                >
+                  Limpiar
+                </button>
+              )}
+            </div>
+          </div>
 
           <div className="space-y-6">
             {estructura.map((seccion) => (
@@ -190,7 +220,9 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                                   </svg>
                                 )}
                               </span>
-                              {sub.nombre}
+                              <span className="flex-1 truncate">
+                                {sub.nombre}
+                              </span>
                             </label>
                           );
                         })}
@@ -282,7 +314,6 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     );
   }
 
-  // === FASE EXAMEN ===
   if (fase === 'examen') {
     const p = preguntas[indice];
     const minutosRestantes = Math.floor(segundos / 60);
@@ -293,7 +324,9 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       <div className="space-y-5">
         <div className="glass-card-strong rounded-[22px] p-4 flex items-center justify-between sticky top-20 z-10">
           <div className="text-sm text-black/60">
-            Pregunta <span className="font-bold text-black">{indice + 1}</span> de {preguntas.length}
+            Pregunta{' '}
+            <span className="font-bold text-black">{indice + 1}</span> de{' '}
+            {preguntas.length}
             <span className="mx-3 text-black/20">·</span>
             {respondidas} respondidas
           </div>
@@ -372,7 +405,6 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     );
   }
 
-  // === FASE RESULTADO ===
   const correctas = preguntas.filter(
     (p) => respuestas[p.id] === p.respuestaCorrecta
   ).length;
@@ -386,7 +418,8 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           Resultado final
         </p>
         <p className="text-6xl font-bold text-black mb-2 tracking-tight">
-          {correctas}<span className="text-black/30">/{preguntas.length}</span>
+          {correctas}
+          <span className="text-black/30">/{preguntas.length}</span>
         </p>
         <p
           className={`text-3xl font-bold ${
@@ -428,7 +461,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                       : 'bg-[#FF3B30]/10 text-[#FF3B30]'
                   }`}
                 >
-                  {esCorrecta ? '✓ Correcta' : '✗ Incorrecta'}
+                  {esCorrecta ? 'Correcta' : 'Incorrecta'}
                 </span>
               </div>
               <p className="text-black font-medium mb-3 leading-snug">
@@ -437,7 +470,11 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
               <div className="space-y-1 text-sm mb-3">
                 <p className="text-black/60">
                   Tu respuesta:{' '}
-                  <span className={`font-bold ${esCorrecta ? 'text-[#34C759]' : 'text-[#FF3B30]'}`}>
+                  <span
+                    className={`font-bold ${
+                      esCorrecta ? 'text-[#34C759]' : 'text-[#FF3B30]'
+                    }`}
+                  >
                     {respuesta || '—'}
                   </span>
                 </p>
