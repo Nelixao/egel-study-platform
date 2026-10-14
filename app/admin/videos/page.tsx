@@ -50,7 +50,12 @@ export default async function AdminVideosPage() {
               </h2>
             </div>
 
-            <form action={actualizarVideoSubarea} className="space-y-3">
+            <form
+              action={async (formData) => {
+                await actualizarVideoSubarea(formData);
+              }}
+              className="divide-y divide-black/5"
+            >
               <input type="hidden" name="subareaId" value={sub.id} />
               <div className="flex gap-2">
                 <input

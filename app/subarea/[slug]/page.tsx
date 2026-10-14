@@ -22,11 +22,14 @@ export default async function SubareaPage({ params }: Props) {
 
   if (!subarea) notFound();
 
-  const [area] = await db
-    .select()
-    .from(areas)
-    .where(eq(areas.id, subarea.areaId))
-    .limit(1);
+  const areaId = subarea.areaId;
+  const [area] = areaId
+    ? await db
+      .select()
+      .from(areas)
+      .where(eq(areas.id, areaId))
+      .limit(1)
+    : [null];
 
   const leccionesDeSubarea = await db
     .select()

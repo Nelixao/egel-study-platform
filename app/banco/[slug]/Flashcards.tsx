@@ -15,7 +15,6 @@ type Pregunta = {
 
 export default function Flashcards({ preguntas }: { preguntas: Pregunta[] }) {
   const [indice, setIndice] = useState(0);
-  const [volteada, setVolteada] = useState(false);
   const [opcionSel, setOpcionSel] = useState<string | null>(null);
 
   const p = preguntas[indice];
@@ -33,7 +32,6 @@ export default function Flashcards({ preguntas }: { preguntas: Pregunta[] }) {
   function siguiente() {
     if (indice < total - 1) {
       setIndice(indice + 1);
-      setVolteada(false);
       setOpcionSel(null);
     }
   }
@@ -41,14 +39,12 @@ export default function Flashcards({ preguntas }: { preguntas: Pregunta[] }) {
   function anterior() {
     if (indice > 0) {
       setIndice(indice - 1);
-      setVolteada(false);
       setOpcionSel(null);
     }
   }
 
   function reiniciar() {
     setIndice(0);
-    setVolteada(false);
     setOpcionSel(null);
   }
 
@@ -222,7 +218,6 @@ export default function Flashcards({ preguntas }: { preguntas: Pregunta[] }) {
             key={i}
             onClick={() => {
               setIndice(i);
-              setVolteada(false);
               setOpcionSel(null);
             }}
             className={`w-2 h-2 rounded-full transition-all ${

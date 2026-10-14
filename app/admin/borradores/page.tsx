@@ -19,31 +19,47 @@ export default function BorradoresPage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function cargar() {
-    setCargando(true);
+  async function cargar(estaActivo: () => boolean = () => true) {
     try {
       const res = await fetch('/api/borradores');
       const data = await res.json();
-      setBorradores(data.borradores || []);
+      if (estaActivo()) {
+        setBorradores(data.borradores || []);
+      }
     } catch {
-      setError('Error cargando borradores');
+      if (estaActivo()) {
+        setError('Error cargando borradores');
+      }
     } finally {
-      setCargando(false);
+      if (estaActivo()) {
+        setCargando(false);
+      }
     }
   }
 
   useEffect(() => {
-    cargar();
+    let activo = true;
+
+    async function cargarInicial() {
+      await cargar(() => activo);
+    }
+
+    void cargarInicial();
+    return () => {
+      activo = false;
+    };
   }, []);
 
   async function aprobar(id: number) {
     await fetch(`/api/preguntas/${id}/aprobar`, { method: 'POST' });
+    setCargando(true);
     cargar();
   }
 
   async function descartar(id: number) {
     if (!confirm('¿Descartar esta pregunta? Se eliminará permanentemente.')) return;
     await fetch(`/api/preguntas/${id}`, { method: 'DELETE' });
+    setCargando(true);
     cargar();
   }
 

@@ -46,8 +46,10 @@ export default async function EditarDocumentoPage({ params }: Props) {
 
       <div className="max-w-3xl mx-auto px-5 py-6">
         <form
-          action={actualizarDocumento}
-          className="glass-card-strong rounded-[20px] overflow-hidden divide-y divide-black/5"
+          action={async (formData) => {
+            await actualizarDocumento(formData);
+          }}
+          className="divide-y divide-black/5"
         >
           <input type="hidden" name="id" value={doc.id} />
 

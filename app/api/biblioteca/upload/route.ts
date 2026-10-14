@@ -6,6 +6,12 @@ import { documentos } from '@/db/schema';
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
+interface CloudinaryUploadResult {
+  secure_url: string;
+  public_id: string;
+  resource_type: string;
+}
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -36,7 +42,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     // 1. Subir a Cloudinary
-    const uploadResult = await new Promise<any>((resolve, reject) => {
+    const uploadResult = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           resource_type: 'raw',
@@ -45,7 +51,15 @@ export async function POST(request: NextRequest) {
         },
         (error, result) => {
           if (error) reject(error);
-          else resolve(result);
+          else if (result) {
+            resolve({
+              secure_url: result.secure_url,
+              public_id: result.public_id,
+              resource_type: result.resource_type,
+            });
+          } else {
+            reject(new Error('Cloudinary no devolvió el resultado de la carga'));
+          }
         }
       );
       stream.end(buffer);

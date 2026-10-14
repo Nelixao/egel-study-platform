@@ -100,7 +100,12 @@ export default async function AdminLeccionesPage() {
             </h2>
           </div>
 
-          <form action={crearLeccion} className="divide-y divide-black/[0.05]">
+          <form
+            action={async (formData) => {
+              await crearLeccion(formData);
+            }}
+            className="divide-y divide-black/5"
+          >
             <div className="px-6 py-4">
               <label className="block text-sm font-medium text-black mb-2">
                 Subárea

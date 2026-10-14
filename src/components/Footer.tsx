@@ -158,7 +158,7 @@ export default function Footer() {
                 Este sitio es un proyecto independiente con fines
                 exclusivamente educativos. No está afiliado, respaldado ni
                 patrocinado por Ceneval, la Secretaría de Educación Pública,
-                ni ninguna institución educativa. El nombre "EGEL" y "Ceneval"
+                ni ninguna institución educativa. El nombre “EGEL” y “Ceneval”
                 son marcas registradas de sus respectivos propietarios y se
                 mencionan únicamente con fines descriptivos.
               </p>

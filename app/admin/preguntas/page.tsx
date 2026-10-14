@@ -43,7 +43,12 @@ export default async function AdminPreguntasPage() {
             </h2>
           </div>
 
-          <form action={crearPregunta} className="divide-y divide-black/5">
+          <form
+            action={async (formData) => {
+              await crearPregunta(formData);
+            }}
+            className="divide-y divide-black/5"
+          >
             {/* Subárea */}
             <div className="px-5 py-4">
               <label className="block text-sm font-medium text-black mb-2">

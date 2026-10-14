@@ -39,11 +39,14 @@ export async function getSubareaPorSlug(slug: string) {
 
   if (!subarea) return null;
 
-  const [area] = await db
-    .select()
-    .from(areas)
-    .where(eq(areas.id, subarea.areaId))
-    .limit(1);
+  const areaId = subarea.areaId;
+  const [area] = areaId
+    ? await db
+      .select()
+      .from(areas)
+      .where(eq(areas.id, areaId))
+      .limit(1)
+    : [null];
 
   const preguntasDeSubarea = await db
     .select()

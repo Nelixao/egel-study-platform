@@ -41,7 +41,7 @@ export default function TerminosPage() {
 
           <h2>1. Aceptación de los términos</h2>
           <p>
-            Al acceder y utilizar esta plataforma (en adelante, "el Sitio"),
+            Al acceder y utilizar esta plataforma (en adelante, “el Sitio”),
             aceptas cumplir con estos Términos y Condiciones. Si no estás de
             acuerdo con alguna parte, te pedimos no utilizar el Sitio.
           </p>
@@ -63,8 +63,8 @@ export default function TerminosPage() {
               El Sitio NO está afiliado, respaldado ni patrocinado por Ceneval
               (Centro Nacional de Evaluación para la Educación Superior, A.C.)
             </strong>{' '}
-            ni por ninguna institución educativa. El nombre "EGEL Plus" y
-            "Ceneval" son marcas registradas por sus respectivos propietarios y
+            ni por ninguna institución educativa. El nombre “EGEL Plus” y
+            “Ceneval” son marcas registradas por sus respectivos propietarios y
             se mencionan únicamente con fines informativos y descriptivos.
           </p>
           <p>
@@ -75,7 +75,7 @@ export default function TerminosPage() {
 
           <h2>4. Uso educativo y sin garantías</h2>
           <p>
-            El Sitio se ofrece <strong>"tal cual"</strong>, sin garantías de
+            El Sitio se ofrece <strong>“tal cual”</strong>, sin garantías de
             ningún tipo, expresas o implícitas. No garantizamos:
           </p>
           <ul>

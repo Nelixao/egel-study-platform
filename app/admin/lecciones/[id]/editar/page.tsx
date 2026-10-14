@@ -52,9 +52,7 @@ export default async function EditarLeccionPage({ params }: Props) {
 
       <div className="max-w-3xl mx-auto px-5 py-6">
         <form
-          action={actualizarLeccion}
-          className="glass-card-strong rounded-[20px] overflow-hidden divide-y divide-black/5"
-        >
+          action={async (formData) => {await actualizarLeccion(formData); }}className="glass-card-strong rounded-[20px] overflow-hidden divide-y divide-black/5">
           <input type="hidden" name="id" value={leccion.id} />
 
           <div className="px-5 py-4">

@@ -315,15 +315,27 @@ export default function TemarioInteractivo() {
   const [hidratado, setHidratado] = useState(false);
 
   useEffect(() => {
-    const guardado = localStorage.getItem('temario-progreso-v1');
-    if (guardado) {
-      try {
-        setChecked(JSON.parse(guardado));
-      } catch {
-        // ignorar
+    let activo = true;
+
+    async function hidratarProgreso() {
+      await Promise.resolve();
+      if (!activo) return;
+
+      const guardado = localStorage.getItem('temario-progreso-v1');
+      if (guardado) {
+        try {
+          setChecked(JSON.parse(guardado));
+        } catch {
+          // ignorar
+        }
       }
+      setHidratado(true);
     }
-    setHidratado(true);
+
+    void hidratarProgreso();
+    return () => {
+      activo = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -353,11 +365,9 @@ export default function TemarioInteractivo() {
     return disciplinar + trans;
   }, []);
 
-  const totalCompletados = useMemo(() => {
-    const disciplinar = areas.reduce((acc, a) => acc + contarCompletados(a), 0);
-    const trans = transversales.reduce((acc, a) => acc + contarCompletados(a), 0);
-    return disciplinar + trans;
-  }, [checked]);
+  const totalCompletados =
+    areas.reduce((acc, a) => acc + contarCompletados(a), 0) +
+    transversales.reduce((acc, a) => acc + contarCompletados(a), 0);
 
   const porcentajeGlobal =
     totalTemas > 0 ? Math.round((totalCompletados / totalTemas) * 100) : 0;

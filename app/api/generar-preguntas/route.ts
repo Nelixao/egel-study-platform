@@ -60,6 +60,21 @@ FORMATO DE RESPUESTA (JSON estricto):
     }
   ]
 }`;
+
+interface PreguntaGenerada {
+  enunciado: string;
+  opcionA: string;
+  opcionB: string;
+  opcionC: string;
+  respuestaCorrecta: string;
+  dificultad?: string;
+  explicacion: string;
+}
+
+interface RespuestaGenerada {
+  preguntas: PreguntaGenerada[];
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { documentoId, cantidad = 5 } = await request.json();
@@ -143,15 +158,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Parsear JSON
-    let preguntasGeneradas;
+    let preguntasGeneradas: RespuestaGenerada;
     try {
-      preguntasGeneradas = JSON.parse(textoRespuesta);
+      preguntasGeneradas = JSON.parse(textoRespuesta) as RespuestaGenerada;
     } catch {
       const limpio = textoRespuesta
         .replace(/```json\n?/g, '')
         .replace(/```\n?/g, '')
         .trim();
-      preguntasGeneradas = JSON.parse(limpio);
+      preguntasGeneradas = JSON.parse(limpio) as RespuestaGenerada;
     }
 
     if (!preguntasGeneradas.preguntas || !Array.isArray(preguntasGeneradas.preguntas)) {
@@ -169,7 +184,7 @@ export async function POST(request: NextRequest) {
     const insertadas = await db
       .insert(preguntas)
       .values(
-        preguntasGeneradas.preguntas.map((p: any) => ({
+        preguntasGeneradas.preguntas.map((p) => ({
           subareaId: subareaId,
           documentoId: doc.id,
           enunciado: p.enunciado,

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { obtenerPreguntasAleatorias } from '@/app/actions/simulador';
 
 type Subarea = { id: number; nombre: string };
@@ -33,17 +34,29 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   const intervaloRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const subareaParam = searchParams.get('subareas');
-    if (subareaParam) {
-      const ids = subareaParam
-        .split(',')
-        .map((s) => Number(s.trim()))
-        .filter((n) => !isNaN(n));
-      if (ids.length > 0) {
-        setSubareasSel(ids);
-        setCantidad(10);
+    let activo = true;
+
+    async function aplicarParametros() {
+      await Promise.resolve();
+      if (!activo) return;
+
+      const subareaParam = searchParams.get('subareas');
+      if (subareaParam) {
+        const ids = subareaParam
+          .split(',')
+          .map((s) => Number(s.trim()))
+          .filter((n) => !isNaN(n));
+        if (ids.length > 0) {
+          setSubareasSel(ids);
+          setCantidad(10);
+        }
       }
     }
+
+    void aplicarParametros();
+    return () => {
+      activo = false;
+    };
   }, [searchParams]);
 
   useEffect(() => {
@@ -62,7 +75,6 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     return () => {
       if (intervaloRef.current) clearInterval(intervaloRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fase]);
 
   function toggleSubarea(id: number) {
@@ -92,7 +104,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     const resultado = await obtenerPreguntasAleatorias(subareasSel, cantidad);
 
     if ('error' in resultado) {
-      setError(resultado.error);
+      setError(resultado.error ?? null);
       return;
     }
 
@@ -509,12 +521,12 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
         >
           Nuevo simulador
         </button>
-        <a
+        <Link
           href="/"
           className="px-8 py-3.5 rounded-2xl bg-white/60 backdrop-blur-md border border-black/5 text-black/70 font-medium hover:bg-white tap-scale"
         >
           Volver al inicio
-        </a>
+        </Link>
       </div>
     </div>
   );
