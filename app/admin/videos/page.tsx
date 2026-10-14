@@ -1,7 +1,10 @@
+import Link from 'next/link';
 import { db } from '@/db';
 import { subareas, areas } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
 import { actualizarVideoSubarea } from '@/app/actions/subareas';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminVideosPage() {
   const todasSubareas = await db
@@ -32,8 +35,8 @@ export default async function AdminVideosPage() {
 
       <div className="max-w-3xl mx-auto px-5 py-6 space-y-4">
         <div className="glass-card rounded-[18px] p-4 text-sm text-black/70">
-          💡 <strong>Acepta:</strong> youtube.com/watch?v=..., youtu.be/...,
-          vimeo.com/..., o cualquier URL con iframe compatible.
+          <strong className="text-black">Acepta:</strong> youtube.com/watch?v=...,
+          youtu.be/..., vimeo.com/..., o cualquier URL con iframe compatible.
         </div>
 
         {todasSubareas.map((sub) => (
@@ -79,14 +82,14 @@ export default async function AdminVideosPage() {
                   <span className="text-[#34C759] font-medium">
                     Video configurado
                   </span>
-                  <a
+                  <Link
                     href={`/subarea/${sub.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#007AFF] hover:underline ml-auto"
                   >
                     Ver en la subárea →
-                  </a>
+                  </Link>
                 </div>
               )}
             </form>

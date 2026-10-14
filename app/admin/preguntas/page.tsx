@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { db } from '@/db';
 import { subareas, areas, preguntas } from '@/db/schema';
 import { asc, eq, desc } from 'drizzle-orm';
