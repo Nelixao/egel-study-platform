@@ -12,14 +12,21 @@ type Pregunta = {
   respuestaCorrecta: string;
   explicacion: string | null;
   dificultad: string | null;
+  subareaSlug?: string;
 };
 
 export default function Flashcards({
   preguntas,
   subareaSlug,
+  onRespuesta,
+  onComplete,
+  onCompleteLabel,
 }: {
   preguntas: Pregunta[];
-  subareaSlug: string;
+  subareaSlug?: string;
+  onRespuesta?: (preguntaId: number, correcta: boolean) => void;
+  onComplete?: () => void;
+  onCompleteLabel?: string;
 }) {
   const [indice, setIndice] = useState(0);
   const [opcionSel, setOpcionSel] = useState<string | null>(null);
@@ -58,11 +65,14 @@ export default function Flashcards({
   function elegir(letra: string) {
     if (respondida) return;
     setOpcionSel(letra);
+    const correcta = letra === p.respuestaCorrecta;
     guardarIntento({
-      subareaSlug,
-      correcta: letra === p.respuestaCorrecta,
+      subareaSlug: p.subareaSlug ?? subareaSlug ?? '',
+      preguntaId: p.id,
+      correcta,
       fecha: new Date().toISOString(),
     });
+    onRespuesta?.(p.id, correcta);
   }
 
   return (
@@ -208,10 +218,10 @@ export default function Flashcards({
 
         {indice === total - 1 ? (
           <button
-            onClick={reiniciar}
+            onClick={onComplete ?? reiniciar}
             className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#5856D6] text-white text-sm font-semibold tap-scale shadow-md shadow-[#007AFF]/20"
           >
-            Volver al inicio
+            {onCompleteLabel ?? (onComplete ? 'Continuar' : 'Volver al inicio')}
           </button>
         ) : (
           <button

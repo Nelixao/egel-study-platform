@@ -1,6 +1,6 @@
-import { asc } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import { db } from '@/db';
-import { subareas } from '@/db/schema';
+import { preguntas, subareas } from '@/db/schema';
 import HoyDashboard from './HoyDashboard';
 
 export const metadata = {
@@ -8,10 +8,33 @@ export const metadata = {
 };
 
 export default async function HoyPage() {
-  const todasSubareas = await db
-    .select({ slug: subareas.slug, nombre: subareas.nombre })
-    .from(subareas)
-    .orderBy(asc(subareas.id));
+  const [todasSubareas, preguntasDisponibles] = await Promise.all([
+    db
+      .select({
+        slug: subareas.slug,
+        nombre: subareas.nombre,
+        preguntasDisponibles: sql<number>`count(${preguntas.id})::int`,
+      })
+      .from(subareas)
+      .leftJoin(
+        preguntas,
+        and(
+          eq(preguntas.subareaId, subareas.id),
+          eq(preguntas.esBorrador, false)
+        )
+      )
+      .groupBy(subareas.id, subareas.slug, subareas.nombre)
+      .orderBy(asc(subareas.id)),
+    db
+      .select({ id: preguntas.id })
+      .from(preguntas)
+      .where(eq(preguntas.esBorrador, false)),
+  ]);
 
-  return <HoyDashboard subareas={todasSubareas} />;
+  return (
+    <HoyDashboard
+      subareas={todasSubareas}
+      preguntaIds={preguntasDisponibles.map((pregunta) => pregunta.id)}
+    />
+  );
 }

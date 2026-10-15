@@ -62,6 +62,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       if (respuesta && subareaSlug) {
         guardarIntento({
           subareaSlug,
+          preguntaId: pregunta.id,
           correcta: respuesta === pregunta.respuestaCorrecta,
           fecha,
         });
