@@ -9,8 +9,9 @@ const publicLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/simulador', label: 'Simulador' },
   { href: '/temas', label: 'Temas' },
-   { href: '/temario', label: 'Temario' },
+  { href: '/temario', label: 'Temario' },
   { href: '/banco', label: 'Banco de preguntas' },
+  { href: '/hoy', label: 'Hoy' },
 ];
 
 const adminLinks = [

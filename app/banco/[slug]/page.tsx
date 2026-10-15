@@ -103,7 +103,7 @@ export default async function BancoSubareaPage({ params }: Props) {
       </header>
 
       <div className="max-w-3xl mx-auto px-5 py-8">
-        <Flashcards preguntas={preguntasDeSubarea} />
+        <Flashcards preguntas={preguntasDeSubarea} subareaSlug={subarea.slug} />
       </div>
     </main>
   );

@@ -49,6 +49,7 @@ export default async function EditarDocumentoPage({ params }: Props) {
       <div className="max-w-3xl mx-auto px-5 py-6">
         <form
           action={async (formData) => {
+            'use server';
             await actualizarDocumento(formData);
           }}
           className="divide-y divide-black/5"

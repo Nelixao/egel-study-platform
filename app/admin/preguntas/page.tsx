@@ -47,6 +47,7 @@ export default async function AdminPreguntasPage() {
 
           <form
             action={async (formData) => {
+              'use server';
               await crearPregunta(formData);
             }}
             className="divide-y divide-black/5"

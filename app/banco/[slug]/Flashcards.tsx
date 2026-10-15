@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { guardarIntento } from '@/lib/progreso';
 
 type Pregunta = {
   id: number;
@@ -13,7 +14,13 @@ type Pregunta = {
   dificultad: string | null;
 };
 
-export default function Flashcards({ preguntas }: { preguntas: Pregunta[] }) {
+export default function Flashcards({
+  preguntas,
+  subareaSlug,
+}: {
+  preguntas: Pregunta[];
+  subareaSlug: string;
+}) {
   const [indice, setIndice] = useState(0);
   const [opcionSel, setOpcionSel] = useState<string | null>(null);
 
@@ -51,6 +58,11 @@ export default function Flashcards({ preguntas }: { preguntas: Pregunta[] }) {
   function elegir(letra: string) {
     if (respondida) return;
     setOpcionSel(letra);
+    guardarIntento({
+      subareaSlug,
+      correcta: letra === p.respuestaCorrecta,
+      fecha: new Date().toISOString(),
+    });
   }
 
   return (

@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { obtenerPreguntasAleatorias } from '@/app/actions/simulador';
+import { guardarIntento } from '@/lib/progreso';
 
-type Subarea = { id: number; nombre: string };
+type Subarea = { id: number; nombre: string; slug: string };
 type Area = { id: number; nombre: string; subareas: Subarea[] };
 type Seccion = { id: number; nombre: string; areas: Area[] };
 type Pregunta = {
   id: number;
+  subareaId: number | null;
   enunciado: string;
   opcionA: string;
   opcionB: string;
@@ -32,6 +34,42 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   const [respuestas, setRespuestas] = useState<Record<number, string>>({});
   const [segundos, setSegundos] = useState(0);
   const intervaloRef = useRef<NodeJS.Timeout | null>(null);
+  const preguntasRef = useRef<Pregunta[]>([]);
+  const respuestasRef = useRef<Record<number, string>>({});
+  const finalizadoRef = useRef(false);
+
+  const terminar = useCallback(() => {
+    if (finalizadoRef.current) return;
+    finalizadoRef.current = true;
+
+    if (intervaloRef.current) clearInterval(intervaloRef.current);
+
+    const subareaSlugPorId = new Map(
+      estructura.flatMap((seccion) =>
+        seccion.areas.flatMap((area) =>
+          area.subareas.map((subarea) => [subarea.id, subarea.slug] as const)
+        )
+      )
+    );
+    const fecha = new Date().toISOString();
+
+    for (const pregunta of preguntasRef.current) {
+      const respuesta = respuestasRef.current[pregunta.id];
+      const subareaSlug = pregunta.subareaId
+        ? subareaSlugPorId.get(pregunta.subareaId)
+        : undefined;
+
+      if (respuesta && subareaSlug) {
+        guardarIntento({
+          subareaSlug,
+          correcta: respuesta === pregunta.respuestaCorrecta,
+          fecha,
+        });
+      }
+    }
+
+    setFase('resultado');
+  }, [estructura]);
 
   useEffect(() => {
     let activo = true;
@@ -75,7 +113,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     return () => {
       if (intervaloRef.current) clearInterval(intervaloRef.current);
     };
-  }, [fase]);
+  }, [fase, terminar]);
 
   function toggleSubarea(id: number) {
     setSubareasSel((prev) =>
@@ -109,14 +147,22 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     }
 
     setPreguntas(resultado.preguntas);
+    preguntasRef.current = resultado.preguntas;
+    respuestasRef.current = {};
     setRespuestas({});
     setIndice(0);
     setSegundos(minutos * 60);
+    finalizadoRef.current = false;
     setFase('examen');
   }
 
   function responder(opcion: string) {
-    setRespuestas((r) => ({ ...r, [preguntas[indice].id]: opcion }));
+    const actualizadas = {
+      ...respuestasRef.current,
+      [preguntas[indice].id]: opcion,
+    };
+    respuestasRef.current = actualizadas;
+    setRespuestas(actualizadas);
   }
 
   function siguiente() {
@@ -128,12 +174,10 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     if (indice > 0) setIndice(indice - 1);
   }
 
-  function terminar() {
-    if (intervaloRef.current) clearInterval(intervaloRef.current);
-    setFase('resultado');
-  }
-
   function reiniciar() {
+    finalizadoRef.current = false;
+    preguntasRef.current = [];
+    respuestasRef.current = {};
     setFase('config');
     setPreguntas([]);
     setRespuestas({});

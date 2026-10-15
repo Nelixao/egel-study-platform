@@ -55,6 +55,7 @@ export default async function AdminVideosPage() {
 
             <form
               action={async (formData) => {
+                'use server';
                 await actualizarVideoSubarea(formData);
               }}
               className="divide-y divide-black/5"
