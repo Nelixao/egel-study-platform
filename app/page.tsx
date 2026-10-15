@@ -1,8 +1,17 @@
 import Link from 'next/link';
+import { sql, eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { preguntas } from '@/db/schema';
 import { getEstructuraCompleta } from '@/lib/queries';
 
 export default async function Home() {
-  const secciones = await getEstructuraCompleta();
+  const [secciones, [reactivosAprobados]] = await Promise.all([
+    getEstructuraCompleta(),
+    db
+      .select({ total: sql<number>`count(*)::int` })
+      .from(preguntas)
+      .where(eq(preguntas.esBorrador, false)),
+  ]);
 
   const totalSubareas = secciones
     .flatMap((s) => s.areas)
@@ -56,7 +65,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-3 gap-6 mt-14 max-w-xl">
             <div>
-              <p className="text-3xl md:text-4xl font-bold text-white tracking-tight">200</p>
+              <p className="text-3xl md:text-4xl font-bold text-white tracking-tight">{reactivosAprobados.total}</p>
               <p className="text-xs text-white/70 mt-1 font-medium">Reactivos</p>
             </div>
             <div>

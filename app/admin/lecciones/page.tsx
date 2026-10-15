@@ -104,6 +104,7 @@ export default async function AdminLeccionesPage() {
 
           <form
             action={async (formData) => {
+              'use server';
               await crearLeccion(formData);
             }}
             className="divide-y divide-black/5"
@@ -281,6 +282,7 @@ Explicación del concepto...
 
                       <form
                         action={async () => {
+                          'use server';
                           'use server';
                           await eliminarLeccion(l.id);
                         }}
