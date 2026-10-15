@@ -16,5 +16,5 @@ export const proxy = auth((req) => {
 });
 
 export const config = {
-  matcher: ['/admin', '/admin/:path*'],
+  matcher: ['/admin', '/admin/:path*', '/biblioteca/:id/editar'],
 };

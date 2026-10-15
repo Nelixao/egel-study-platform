@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { documentos, subareas, preguntas } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -77,6 +78,8 @@ interface RespuestaGenerada {
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
+
     const { documentoId, cantidad = 5 } = await request.json();
 
     if (!documentoId) {
@@ -205,6 +208,10 @@ export async function POST(request: NextRequest) {
       total: insertadas.length,
     });
   } catch (error) {
+    if (error instanceof Error && error.message === 'No autorizado') {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     console.error('Error:', error);
     return NextResponse.json(
       { error: 'Error procesando la solicitud' },

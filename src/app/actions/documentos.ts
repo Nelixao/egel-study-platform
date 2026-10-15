@@ -4,8 +4,11 @@ import { db } from '@/db';
 import { documentos } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export async function actualizarDocumento(formData: FormData) {
+  await requireAdmin();
+
   const id = Number(formData.get('id'));
   const titulo = formData.get('titulo') as string;
   const autor = (formData.get('autor') as string) || null;
