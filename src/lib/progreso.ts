@@ -2,6 +2,7 @@ export type Intento = {
   subareaSlug: string;
   correcta: boolean;
   fecha: string;
+  preguntaId?: number;
 };
 
 export type PrecisionSubarea = {
@@ -17,6 +18,14 @@ export type EstadisticasProgreso = {
   precisionPorSubarea: PrecisionSubarea[];
 };
 
+export type Logro = {
+  id: 'primera-pregunta' | 'racha-3-dias' | '50-preguntas' | 'precision-70';
+  nombre: string;
+  descripcion: string;
+  icono: string;
+  logrado: boolean;
+};
+
 const STORAGE_KEY = 'egel-study-platform:progreso';
 
 function esIntento(valor: unknown): valor is Intento {
@@ -28,7 +37,11 @@ function esIntento(valor: unknown): valor is Intento {
     intento.subareaSlug.length > 0 &&
     typeof intento.correcta === 'boolean' &&
     typeof intento.fecha === 'string' &&
-    !Number.isNaN(Date.parse(intento.fecha))
+    !Number.isNaN(Date.parse(intento.fecha)) &&
+    (intento.preguntaId === undefined ||
+      (typeof intento.preguntaId === 'number' &&
+        Number.isSafeInteger(intento.preguntaId) &&
+        intento.preguntaId > 0))
   );
 }
 
@@ -44,6 +57,23 @@ export function obtenerIntentos(): Intento[] {
   } catch {
     return [];
   }
+}
+
+export function obtenerIdsErroresPendientes(intentos: Intento[]): number[] {
+  const ultimoIntentoPorPregunta = new Map<number, Intento>();
+
+  for (const intento of intentos.filter(esIntento)) {
+    if (intento.preguntaId === undefined) continue;
+
+    const anterior = ultimoIntentoPorPregunta.get(intento.preguntaId);
+    if (!anterior || Date.parse(intento.fecha) >= Date.parse(anterior.fecha)) {
+      ultimoIntentoPorPregunta.set(intento.preguntaId, intento);
+    }
+  }
+
+  return Array.from(ultimoIntentoPorPregunta)
+    .filter(([, intento]) => !intento.correcta)
+    .map(([preguntaId]) => preguntaId);
 }
 
 export function guardarIntento(intento: Intento): void {
@@ -116,4 +146,43 @@ export function calcularEstadisticas(
     ).length,
     precisionPorSubarea,
   };
+}
+
+export function calcularLogros(intentos: Intento[]): Logro[] {
+  const intentosValidos = intentos.filter(esIntento);
+  const estadisticas = calcularEstadisticas(intentosValidos);
+
+  return [
+    {
+      id: 'primera-pregunta',
+      nombre: 'Primer paso',
+      descripcion: 'Respondiste tu primera pregunta',
+      icono: '🌱',
+      logrado: intentosValidos.length >= 1,
+    },
+    {
+      id: 'racha-3-dias',
+      nombre: 'Constancia',
+      descripcion: 'Practicaste 3 días consecutivos',
+      icono: '🔥',
+      logrado: estadisticas.rachaDias >= 3,
+    },
+    {
+      id: '50-preguntas',
+      nombre: 'En marcha',
+      descripcion: 'Respondiste 50 preguntas',
+      icono: '📚',
+      logrado: intentosValidos.length >= 50,
+    },
+    {
+      id: 'precision-70',
+      nombre: 'Buen dominio',
+      descripcion: 'Lograste 70% de precisión en una subárea (mínimo 10 intentos)',
+      icono: '🏆',
+      logrado: estadisticas.precisionPorSubarea.some(
+        (subarea) =>
+          subarea.total >= 10 && subarea.correctas / subarea.total >= 0.7
+      ),
+    },
+  ];
 }
