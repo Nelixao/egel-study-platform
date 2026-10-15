@@ -3,8 +3,11 @@
 import { db } from '@/db';
 import { preguntas } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export async function crearPregunta(formData: FormData) {
+  await requireAdmin();
+
   const subareaId = Number(formData.get('subareaId'));
   const enunciado = formData.get('enunciado') as string;
   const opcionA = formData.get('opcionA') as string;

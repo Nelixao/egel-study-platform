@@ -4,8 +4,11 @@ import { db } from '@/db';
 import { subareas } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export async function actualizarVideoSubarea(formData: FormData) {
+  await requireAdmin();
+
   const subareaId = Number(formData.get('subareaId'));
   const videoUrl = (formData.get('videoUrl') as string) || null;
 

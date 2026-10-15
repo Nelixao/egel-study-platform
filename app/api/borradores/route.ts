@@ -2,8 +2,18 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { preguntas, subareas, areas } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export async function GET() {
+  try {
+    await requireAdmin();
+  } catch (error) {
+    if (error instanceof Error && error.message === 'No autorizado') {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+    throw error;
+  }
+
   const borradores = await db
     .select({
       id: preguntas.id,

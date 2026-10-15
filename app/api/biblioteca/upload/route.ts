@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { db } from '@/db';
 import { documentos } from '@/db/schema';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -20,6 +21,8 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
+
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const titulo = formData.get('titulo') as string;
@@ -92,6 +95,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ documento: doc });
   } catch (error) {
+    if (error instanceof Error && error.message === 'No autorizado') {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     console.error('Error en upload:', error);
     return NextResponse.json(
       { error: 'Error procesando el archivo' },
