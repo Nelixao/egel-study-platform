@@ -27,6 +27,13 @@ export type Logro = {
 };
 
 const STORAGE_KEY = 'egel-study-platform:progreso';
+const ZONA_HORARIA = 'America/Mexico_City';
+const FORMATEADOR_DIA = new Intl.DateTimeFormat('en-CA', {
+  timeZone: ZONA_HORARIA,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
 
 function esIntento(valor: unknown): valor is Intento {
   if (!valor || typeof valor !== 'object') return false;
@@ -89,10 +96,39 @@ export function guardarIntento(intento: Intento): void {
 }
 
 function obtenerClaveDia(fecha: Date): string {
-  const anio = fecha.getFullYear();
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-  const dia = String(fecha.getDate()).padStart(2, '0');
+  const partes = FORMATEADOR_DIA.formatToParts(fecha);
+  const anio = partes.find((parte) => parte.type === 'year')?.value;
+  const mes = partes.find((parte) => parte.type === 'month')?.value;
+  const dia = partes.find((parte) => parte.type === 'day')?.value;
   return `${anio}-${mes}-${dia}`;
+}
+
+function desplazarDia(claveDia: string, cantidad: number): string {
+  const [anio, mes, dia] = claveDia.split('-').map(Number);
+  const fecha = new Date(Date.UTC(anio, mes - 1, dia + cantidad));
+  return [
+    fecha.getUTCFullYear(),
+    String(fecha.getUTCMonth() + 1).padStart(2, '0'),
+    String(fecha.getUTCDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+function tieneRachaDeTresDias(diasConActividad: Set<string>): boolean {
+  const diasOrdenados = Array.from(diasConActividad).sort();
+  let rachaActual = 0;
+  let diaAnterior: string | undefined;
+
+  for (const dia of diasOrdenados) {
+    rachaActual =
+      diaAnterior && desplazarDia(diaAnterior, 1) === dia
+        ? rachaActual + 1
+        : 1;
+
+    if (rachaActual >= 3) return true;
+    diaAnterior = dia;
+  }
+
+  return false;
 }
 
 export function calcularEstadisticas(
@@ -107,16 +143,11 @@ export function calcularEstadisticas(
     )
   );
 
-  const fechaInicial = new Date(ahora);
-  if (!diasConActividad.has(hoy)) {
-    fechaInicial.setDate(fechaInicial.getDate() - 1);
-  }
-
+  let diaRevisado = diasConActividad.has(hoy) ? hoy : desplazarDia(hoy, -1);
   let rachaDias = 0;
-  const diaRevisado = new Date(fechaInicial);
-  while (diasConActividad.has(obtenerClaveDia(diaRevisado))) {
+  while (diasConActividad.has(diaRevisado)) {
     rachaDias += 1;
-    diaRevisado.setDate(diaRevisado.getDate() - 1);
+    diaRevisado = desplazarDia(diaRevisado, -1);
   }
 
   const intentosPorSubarea = new Map<string, { total: number; correctas: number }>();
@@ -151,6 +182,11 @@ export function calcularEstadisticas(
 export function calcularLogros(intentos: Intento[]): Logro[] {
   const intentosValidos = intentos.filter(esIntento);
   const estadisticas = calcularEstadisticas(intentosValidos);
+  const diasConActividad = new Set(
+    intentosValidos.map((intento) =>
+      obtenerClaveDia(new Date(intento.fecha))
+    )
+  );
 
   return [
     {
@@ -165,7 +201,7 @@ export function calcularLogros(intentos: Intento[]): Logro[] {
       nombre: 'Constancia',
       descripcion: 'Practicaste 3 días consecutivos',
       icono: '🔥',
-      logrado: estadisticas.rachaDias >= 3,
+      logrado: tieneRachaDeTresDias(diasConActividad),
     },
     {
       id: '50-preguntas',
