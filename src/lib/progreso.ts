@@ -27,6 +27,9 @@ export type Logro = {
 };
 
 const STORAGE_KEY = 'egel-study-platform:progreso';
+const META_DIARIA_KEY = 'meta-diaria';
+const META_DIARIA_PREDETERMINADA = 10;
+const EVENTO_PROGRESO_ACTUALIZADO = 'egel-study-platform:progreso-actualizado';
 const ZONA_HORARIA = 'America/Mexico_City';
 const FORMATEADOR_DIA = new Intl.DateTimeFormat('en-CA', {
   timeZone: ZONA_HORARIA,
@@ -66,6 +69,35 @@ export function obtenerIntentos(): Intento[] {
   }
 }
 
+export function obtenerMetaDiaria(): number {
+  if (typeof window === 'undefined') return META_DIARIA_PREDETERMINADA;
+
+  try {
+    const guardada = Number(window.localStorage.getItem(META_DIARIA_KEY));
+    return Number.isSafeInteger(guardada) && guardada > 0
+      ? guardada
+      : META_DIARIA_PREDETERMINADA;
+  } catch {
+    return META_DIARIA_PREDETERMINADA;
+  }
+}
+
+export function guardarMetaDiaria(meta: number): void {
+  if (
+    typeof window === 'undefined' ||
+    !Number.isSafeInteger(meta) ||
+    meta < 1
+  ) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(META_DIARIA_KEY, String(meta));
+  } catch {
+    // La meta puede seguir usando su valor en memoria si el almacenamiento falla.
+  }
+}
+
 export function obtenerIdsErroresPendientes(intentos: Intento[]): number[] {
   const ultimoIntentoPorPregunta = new Map<number, Intento>();
 
@@ -90,6 +122,7 @@ export function guardarIntento(intento: Intento): void {
     const intentos = obtenerIntentos();
     intentos.push(intento);
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(intentos));
+    window.dispatchEvent(new Event(EVENTO_PROGRESO_ACTUALIZADO));
   } catch {
     // El progreso sigue siendo opcional si el navegador bloquea el almacenamiento.
   }
