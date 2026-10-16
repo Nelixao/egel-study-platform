@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react';
 import {
   calcularEstadisticas,
   calcularLogros,
+  guardarMetaDiaria,
   obtenerIdsErroresPendientes,
   obtenerIntentos,
+  obtenerMetaDiaria,
   type EstadisticasProgreso,
   type Logro,
 } from '@/lib/progreso';
@@ -36,9 +38,10 @@ export default function HoyDashboard({
   const [estadisticas, setEstadisticas] = useState(estadisticasIniciales);
   const [logros, setLogros] = useState(logrosIniciales);
   const [erroresPendientes, setErroresPendientes] = useState(0);
+  const [metaDiaria, setMetaDiaria] = useState(10);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
+    function actualizarProgreso() {
       const intentos = obtenerIntentos();
       setEstadisticas(calcularEstadisticas(intentos));
       setLogros(calcularLogros(intentos));
@@ -48,8 +51,23 @@ export default function HoyDashboard({
           preguntasDisponibles.has(id)
         ).length
       );
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      setMetaDiaria(obtenerMetaDiaria());
+      actualizarProgreso();
     });
-    return () => window.cancelAnimationFrame(frame);
+    window.addEventListener(
+      'egel-study-platform:progreso-actualizado',
+      actualizarProgreso
+    );
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener(
+        'egel-study-platform:progreso-actualizado',
+        actualizarProgreso
+      );
+    };
   }, [preguntaIds]);
 
   const precisionPorSlug = new Map(
@@ -95,6 +113,89 @@ export default function HoyDashboard({
       </header>
 
       <div className="max-w-4xl mx-auto px-5 py-8 space-y-6">
+        <section
+          className={`glass-card-strong rounded-[22px] p-6 transition-colors ${
+            estadisticas.preguntasHoy >= metaDiaria
+              ? 'border-[#34C759]/30 bg-[#34C759]/[0.06]'
+              : ''
+          }`}
+          aria-labelledby="meta-diaria-titulo"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold text-[#8E8E93] uppercase tracking-widest mb-2">
+                Tu objetivo de hoy
+              </p>
+              <h2
+                id="meta-diaria-titulo"
+                className="text-xl font-semibold text-black"
+              >
+                Responde {metaDiaria} preguntas hoy
+              </h2>
+              {estadisticas.preguntasHoy >= metaDiaria && (
+                <p className="mt-2 text-sm font-semibold text-[#248A3D]">
+                  Meta cumplida
+                  {estadisticas.preguntasHoy > metaDiaria &&
+                    `: llevas ${estadisticas.preguntasHoy - metaDiaria} más. ¡Buen trabajo!`}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-black/70">
+                {estadisticas.preguntasHoy}/{metaDiaria}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const nuevaMeta = Math.max(1, metaDiaria - 1);
+                  setMetaDiaria(nuevaMeta);
+                  guardarMetaDiaria(nuevaMeta);
+                }}
+                className="h-9 w-9 rounded-full bg-black/[0.05] text-black/70 font-semibold hover:bg-black/[0.08] tap-scale"
+                aria-label="Disminuir meta diaria"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const nuevaMeta = metaDiaria + 1;
+                  setMetaDiaria(nuevaMeta);
+                  guardarMetaDiaria(nuevaMeta);
+                }}
+                className="h-9 w-9 rounded-full bg-black/[0.05] text-black/70 font-semibold hover:bg-black/[0.08] tap-scale"
+                aria-label="Aumentar meta diaria"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div
+            className="mt-5 h-3 rounded-full bg-black/[0.06] overflow-hidden"
+            role="progressbar"
+            aria-label="Progreso de la meta diaria"
+            aria-valuenow={Math.min(estadisticas.preguntasHoy, metaDiaria)}
+            aria-valuemin={0}
+            aria-valuemax={metaDiaria}
+          >
+            <div
+              className={`h-full rounded-full transition-[width] duration-300 ${
+                estadisticas.preguntasHoy >= metaDiaria
+                  ? 'bg-[#34C759]'
+                  : 'bg-gradient-to-r from-[#007AFF] to-[#5856D6]'
+              }`}
+              style={{
+                width: `${Math.min(
+                  100,
+                  (estadisticas.preguntasHoy / metaDiaria) * 100
+                )}%`,
+              }}
+            />
+          </div>
+        </section>
+
         <Pomodoro />
 
         <Link
