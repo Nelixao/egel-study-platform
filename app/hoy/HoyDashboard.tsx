@@ -94,7 +94,9 @@ export default function HoyDashboard({
     )[0];
   const recomendacionInicial =
     recomendacionConIntentos ??
-    subareas.find((subarea) => subarea.preguntasDisponibles > 0);
+    [...subareas]
+      .filter((subarea) => subarea.preguntasDisponibles > 0)
+      .sort((a, b) => b.preguntasDisponibles - a.preguntasDisponibles)[0];
 
   return (
     <main className="bg-ios-canvas min-h-screen">
@@ -196,11 +198,69 @@ export default function HoyDashboard({
           </div>
         </section>
 
+        <section className="relative isolate overflow-hidden glass-elevated rounded-[30px] border-2 border-[#007AFF]/20 p-7 md:p-9">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(0,122,255,0.14),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(88,86,214,0.10),transparent_55%)]"
+          />
+          <p className="text-xs font-semibold text-[#007AFF] uppercase tracking-widest mb-3">
+            Recomendación de hoy
+          </p>
+          {recomendacionConIntentos ? (
+            <>
+              <h2 className="max-w-2xl text-2xl md:text-3xl font-semibold text-black tracking-tight">
+                Hoy toca practicar {recomendacionConIntentos.nombre}
+              </h2>
+              <p className="text-sm md:text-base text-black/60 mt-3 max-w-xl leading-relaxed">
+                Tu precisión en esta subárea es de{' '}
+                <strong className="text-black">
+                  {recomendacionConIntentos.resultado!.precision}%
+                </strong>
+                , la más baja entre las que ya has practicado. Reforzarla puede
+                ayudarte a avanzar.
+              </p>
+              <Link
+                href={`/banco/${recomendacionConIntentos.slug}`}
+                className="inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#5856D6] px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(0,91,210,0.65)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(0,91,210,0.55)] active:scale-[0.97]"
+              >
+                Practicar ahora
+                <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-6-6 6 6-6 6" />
+                </svg>
+              </Link>
+            </>
+          ) : recomendacionInicial ? (
+            <>
+              <h2 className="max-w-2xl text-2xl md:text-3xl font-semibold text-black tracking-tight">
+                Empieza con {recomendacionInicial.nombre}
+              </h2>
+              <p className="text-sm md:text-base text-black/60 mt-3 max-w-xl leading-relaxed">
+                Tiene {recomendacionInicial.preguntasDisponibles} reactivos
+                disponibles. Practica algunos y después podremos recomendarte
+                una subárea según tus resultados.
+              </p>
+              <Link
+                href={`/banco/${recomendacionInicial.slug}`}
+                className="inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#5856D6] px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(0,91,210,0.65)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(0,91,210,0.55)] active:scale-[0.97]"
+              >
+                Practicar ahora
+                <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-6-6 6 6-6 6" />
+                </svg>
+              </Link>
+            </>
+          ) : (
+            <p className="text-sm text-black/55">
+              Aún no hay subáreas con preguntas aprobadas para practicar.
+            </p>
+          )}
+        </section>
+
         <Pomodoro />
 
         <Link
           href="/repasar"
-          className="flex items-center justify-between gap-4 glass-card-strong rounded-[22px] p-5 hover:border-[#007AFF]/25 transition-colors group"
+          className="flex items-center justify-between gap-4 glass-card-strong rounded-[24px] p-5 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:border-[#007AFF]/25 hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.18)] group"
         >
           <span>
             <span className="block text-base font-semibold text-black group-hover:text-[#007AFF] transition-colors">
@@ -218,50 +278,6 @@ export default function HoyDashboard({
             <span aria-hidden="true">→</span>
           </span>
         </Link>
-
-        <section className="glass-card-strong rounded-[22px] p-6">
-          <p className="text-xs font-semibold text-[#8E8E93] uppercase tracking-widest mb-2">
-            Recomendación de hoy
-          </p>
-          {recomendacionConIntentos ? (
-            <>
-              <h2 className="text-xl font-semibold text-black">
-                Practica {recomendacionConIntentos.nombre}: has acertado{' '}
-                {recomendacionConIntentos.resultado!.precision}%
-              </h2>
-              <p className="text-sm text-black/55 mt-2">
-                Basado en {recomendacionConIntentos.resultado!.total} respuestas.
-                Reforzar esta subárea puede ayudarte a mejorar.
-              </p>
-              <Link
-                href={`/banco/${recomendacionConIntentos.slug}`}
-                className="inline-flex mt-5 bg-[#007AFF] hover:bg-[#0066DD] text-white text-sm font-semibold px-5 py-3 rounded-xl tap-scale transition-colors"
-              >
-                Practicar esta subárea
-              </Link>
-            </>
-          ) : recomendacionInicial ? (
-            <>
-              <h2 className="text-xl font-semibold text-black">
-                Empieza practicando: {recomendacionInicial.nombre}
-              </h2>
-              <p className="text-sm text-black/55 mt-2">
-                Cuando tengas al menos 3 respuestas en una subárea, te recomendaremos
-                cuál conviene reforzar.
-              </p>
-              <Link
-                href={`/banco/${recomendacionInicial.slug}`}
-                className="inline-flex mt-5 bg-[#007AFF] hover:bg-[#0066DD] text-white text-sm font-semibold px-5 py-3 rounded-xl tap-scale transition-colors"
-              >
-                Empezar a practicar
-              </Link>
-            </>
-          ) : (
-            <p className="text-sm text-black/55">
-              Aún no hay subáreas con preguntas aprobadas para practicar.
-            </p>
-          )}
-        </section>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="glass-card-strong rounded-[22px] p-6">
@@ -305,12 +321,42 @@ export default function HoyDashboard({
                 <span
                   className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl text-2xl ${
                     logro.logrado
-                      ? 'bg-[#007AFF]/10'
+                      ? 'bg-[#007AFF]/10 text-[#007AFF]'
                       : 'bg-black/[0.05] grayscale opacity-45'
                   }`}
                   aria-hidden="true"
                 >
-                  {logro.icono}
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {logro.logrado ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="m5 12 4 4L19 6"
+                      />
+                    ) : (
+                      <>
+                        <rect
+                          x="5"
+                          y="10"
+                          width="14"
+                          height="11"
+                          rx="2"
+                          strokeWidth={1.8}
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeWidth={1.8}
+                          d="M8 10V7a4 4 0 0 1 8 0v3"
+                        />
+                      </>
+                    )}
+                  </svg>
                 </span>
                 <span className="min-w-0">
                   <span
