@@ -20,27 +20,27 @@ export default async function Home() {
   const totalAreas = secciones.flatMap((s) => s.areas).length;
 
   return (
-    <main className="bg-ios-canvas">
+    <main className="bg-ios-canvas-v2">
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#4A8FE7] to-[#5856D6]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(0,122,255,0.12),transparent_55%),radial-gradient(ellipse_at_top_right,rgba(112,104,232,0.11),transparent_52%)]" />
 
-        <div className="relative max-w-5xl mx-auto px-5 py-20 md:py-28">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold bg-white/20 text-white px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+        <div className="relative max-w-5xl mx-auto px-5 py-12 md:py-16">
+          <div className="glass-elevated rounded-[32px] px-7 py-12 md:px-14 md:py-16">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold bg-white/65 text-[#315276] px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-xl border border-white/80 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse" />
             Basado en la guía oficial de Ceneval 2023
           </span>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight max-w-3xl">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#111827] leading-[1.08] tracking-[-0.045em] max-w-3xl">
             Prepárate para el{' '}
-            <span className="bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#007AFF] to-[#7068E8] bg-clip-text text-transparent">
               EGEL Plus ICOMPU
             </span>{' '}
             a tu ritmo
           </h1>
 
-          <p className="text-lg md:text-xl text-white/85 mt-6 max-w-2xl leading-relaxed">
+          <p className="text-lg md:text-xl text-[#475569] mt-6 max-w-2xl leading-relaxed">
             Lecciones, simulacros cronometrados y un banco de preguntas
             organizado por subárea. Todo en un solo lugar, gratis.
           </p>
@@ -48,7 +48,7 @@ export default async function Home() {
           <div className="flex flex-wrap gap-3 mt-10">
             <Link
               href="/simulador"
-              className="inline-flex items-center gap-2 bg-white hover:bg-white/95 text-[#007AFF] font-semibold px-6 py-3.5 rounded-2xl transition-all tap-scale shadow-lg shadow-black/10"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#007AFF] to-[#5856D6] hover:brightness-105 text-white font-semibold px-6 py-3.5 rounded-2xl transition-all tap-scale shadow-[0_12px_28px_-12px_rgba(0,91,210,0.55)] active:scale-[0.97]"
             >
               Iniciar simulador
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +57,7 @@ export default async function Home() {
             </Link>
             <Link
               href="/temas"
-              className="inline-flex items-center gap-2 border border-white/40 hover:bg-white/10 text-white font-medium px-6 py-3.5 rounded-2xl transition-colors backdrop-blur-md"
+              className="inline-flex items-center gap-2 border border-white/80 bg-white/55 hover:bg-white/80 text-[#315276] font-medium px-6 py-3.5 rounded-2xl transition-colors backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.9)_inset] active:scale-[0.97]"
             >
               Explorar temas
             </Link>
@@ -65,17 +65,18 @@ export default async function Home() {
 
           <div className="grid grid-cols-3 gap-6 mt-14 max-w-xl">
             <div>
-              <p className="text-3xl md:text-4xl font-bold text-white tracking-tight">{reactivosAprobados.total}</p>
-              <p className="text-xs text-white/70 mt-1 font-medium">Reactivos</p>
+              <p className="text-3xl md:text-4xl font-bold text-[#111827] tracking-tight">{reactivosAprobados.total}</p>
+              <p className="text-xs text-[#64748B] mt-1 font-medium">Reactivos</p>
             </div>
             <div>
-              <p className="text-3xl md:text-4xl font-bold text-white tracking-tight">{totalAreas}</p>
-              <p className="text-xs text-white/70 mt-1 font-medium">Áreas</p>
+              <p className="text-3xl md:text-4xl font-bold text-[#111827] tracking-tight">{totalAreas}</p>
+              <p className="text-xs text-[#64748B] mt-1 font-medium">Áreas</p>
             </div>
             <div>
-              <p className="text-3xl md:text-4xl font-bold text-white tracking-tight">{totalSubareas}</p>
-              <p className="text-xs text-white/70 mt-1 font-medium">Subáreas</p>
+              <p className="text-3xl md:text-4xl font-bold text-[#111827] tracking-tight">{totalSubareas}</p>
+              <p className="text-xs text-[#64748B] mt-1 font-medium">Subáreas</p>
             </div>
+          </div>
           </div>
         </div>
       </section>
@@ -85,7 +86,7 @@ export default async function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
             href="/simulador"
-            className="glass-card-strong rounded-[22px] p-6 hover:shadow-lg transition-all tap-scale group animate-slide-up"
+            className="glass-card-strong rounded-[24px] p-6 hover:shadow-lg transition-all tap-scale group animate-slide-up"
           >
             <div className="w-11 h-11 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center mb-4 group-hover:bg-[#007AFF]/15 transition-colors">
               <svg className="w-5 h-5 text-[#007AFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +101,7 @@ export default async function Home() {
 
           <Link
             href="/banco"
-            className="glass-card-strong rounded-[22px] p-6 hover:shadow-lg transition-all tap-scale group animate-slide-up"
+            className="glass-card-strong rounded-[24px] p-6 hover:shadow-lg transition-all tap-scale group animate-slide-up"
             style={{ animationDelay: '60ms' }}
           >
             <div className="w-11 h-11 rounded-2xl bg-[#5856D6]/10 flex items-center justify-center mb-4 group-hover:bg-[#5856D6]/15 transition-colors">
@@ -116,7 +117,7 @@ export default async function Home() {
 
           <Link
             href="/temas"
-            className="glass-card-strong rounded-[22px] p-6 hover:shadow-lg transition-all tap-scale group animate-slide-up"
+            className="glass-card-strong rounded-[24px] p-6 hover:shadow-lg transition-all tap-scale group animate-slide-up"
             style={{ animationDelay: '120ms' }}
           >
             <div className="w-11 h-11 rounded-2xl bg-[#34C759]/10 flex items-center justify-center mb-4 group-hover:bg-[#34C759]/15 transition-colors">
