@@ -118,7 +118,7 @@ export default function HoyDashboard({
         <section
           className={`glass-card-strong rounded-[22px] p-6 transition-colors ${
             estadisticas.preguntasHoy >= metaDiaria
-              ? 'border-[#34C759]/30 bg-[#34C759]/[0.06]'
+              ?               'border-emerald-400/30 bg-emerald-400/[0.08]'
               : ''
           }`}
           aria-labelledby="meta-diaria-titulo"
@@ -135,7 +135,7 @@ export default function HoyDashboard({
                 Responde {metaDiaria} preguntas hoy
               </h2>
               {estadisticas.preguntasHoy >= metaDiaria && (
-                <p className="mt-2 text-sm font-semibold text-[#248A3D]">
+                <p className="mt-2 text-sm font-semibold text-emerald-300">
                   Meta cumplida
                   {estadisticas.preguntasHoy > metaDiaria &&
                     `: llevas ${estadisticas.preguntasHoy - metaDiaria} más. ¡Buen trabajo!`}
@@ -154,7 +154,7 @@ export default function HoyDashboard({
                   setMetaDiaria(nuevaMeta);
                   guardarMetaDiaria(nuevaMeta);
                 }}
-                className="h-9 w-9 rounded-full bg-black/[0.05] text-black/70 font-semibold hover:bg-black/[0.08] tap-scale"
+                className="h-9 w-9 rounded-full bg-slate-700/80 text-slate-100 font-semibold hover:bg-slate-600 tap-scale"
                 aria-label="Disminuir meta diaria"
               >
                 −
@@ -166,7 +166,7 @@ export default function HoyDashboard({
                   setMetaDiaria(nuevaMeta);
                   guardarMetaDiaria(nuevaMeta);
                 }}
-                className="h-9 w-9 rounded-full bg-black/[0.05] text-black/70 font-semibold hover:bg-black/[0.08] tap-scale"
+                className="h-9 w-9 rounded-full bg-slate-700/80 text-slate-100 font-semibold hover:bg-slate-600 tap-scale"
                 aria-label="Aumentar meta diaria"
               >
                 +
@@ -175,7 +175,7 @@ export default function HoyDashboard({
           </div>
 
           <div
-            className="mt-5 h-3 rounded-full bg-black/[0.06] overflow-hidden"
+            className="mt-5 h-3 rounded-full bg-slate-700/80 overflow-hidden"
             role="progressbar"
             aria-label="Progreso de la meta diaria"
             aria-valuenow={Math.min(estadisticas.preguntasHoy, metaDiaria)}
@@ -185,8 +185,8 @@ export default function HoyDashboard({
             <div
               className={`h-full rounded-full transition-[width] duration-300 ${
                 estadisticas.preguntasHoy >= metaDiaria
-                  ? 'bg-[#34C759]'
-                  : 'bg-gradient-to-r from-[#007AFF] to-[#5856D6]'
+                  ? 'bg-emerald-400'
+                  : 'bg-gradient-to-r from-blue-400 to-violet-400'
               }`}
               style={{
                 width: `${Math.min(

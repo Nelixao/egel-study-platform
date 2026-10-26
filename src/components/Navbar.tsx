@@ -56,7 +56,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-1 bg-black/[0.04] rounded-full p-1">
+          <div className="hidden md:flex items-center gap-1 bg-slate-800/80 border border-slate-700/70 rounded-full p-1">
             {links.map((link) => {
               const activo =
                 pathname === link.href ||
@@ -67,8 +67,8 @@ export default function Navbar() {
                   href={link.href}
                   className={`nav-link px-3.5 py-1.5 text-sm rounded-full transition-all duration-300 font-medium ${
                     activo
-                      ? 'nav-link-active text-[#075EC7] shadow-inner'
-                      : 'text-black/60 hover:text-black'
+                      ? 'nav-link-active text-blue-300 shadow-inner'
+                      : 'text-slate-300 hover:text-white'
                   }`}
                 >
                   {link.label}
@@ -114,7 +114,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setMenuAbierto(!menuAbierto)}
-              className="md:hidden p-2 rounded-full text-black/70 hover:bg-black/5 tap-scale"
+              className="md:hidden p-2 rounded-full text-slate-300 hover:bg-slate-700/70 tap-scale"
               aria-label="Menú"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +129,7 @@ export default function Navbar() {
         </div>
 
         {menuAbierto && (
-          <div className="md:hidden py-3 border-t border-black/5 space-y-1 animate-slide-up">
+          <div className="md:hidden py-3 border-t border-slate-700/70 space-y-1 animate-slide-up">
             {links.map((link) => {
               const activo =
                 pathname === link.href ||
@@ -141,8 +141,8 @@ export default function Navbar() {
                   onClick={() => setMenuAbierto(false)}
                   className={`nav-mobile-link block px-4 py-2.5 text-sm rounded-xl transition-colors font-medium ${
                     activo
-                      ? 'bg-[#007AFF]/10 text-[#007AFF]'
-                      : 'text-black/70 hover:bg-black/5'
+                      ? 'bg-blue-400/10 text-blue-300'
+                      : 'text-slate-300 hover:bg-slate-800'
                   }`}
                 >
                   {link.label}

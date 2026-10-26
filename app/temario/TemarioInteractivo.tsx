@@ -513,6 +513,7 @@ function AreaBlock({
   checked: Record<string, boolean>;
   onToggle: (id: string) => void;
 }) {
+  const [expandida, setExpandida] = useState(false);
   const totalTemas = area.subareas.reduce((acc, s) => acc + s.temas.length, 0);
   const completados = area.subareas.reduce(
     (acc, s) => acc + s.temas.filter((t) => checked[t.id]).length,
@@ -524,18 +525,24 @@ function AreaBlock({
   return (
     <div className="glass-elevated rounded-[24px] overflow-hidden">
       {/* Header del área */}
-      <div className="px-6 pt-6 pb-5 border-b border-black/[0.06] relative">
+      <button
+        type="button"
+        className="w-full px-6 pt-6 pb-5 border-b border-black/[0.06] relative text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-blue-400"
+        aria-expanded={expandida}
+        onClick={() => setExpandida((actual) => !actual)}
+      >
         {/* Glow de fondo según color del área */}
-        <div
+        <span
+          aria-hidden="true"
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{
             background: `radial-gradient(circle at top right, ${area.color} 0%, transparent 60%)`,
           }}
         />
 
-        <div className="relative flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2.5 mb-2">
+        <span className="relative flex items-start justify-between gap-4">
+          <span className="flex-1 min-w-0">
+            <span className="flex items-center gap-2.5 mb-2">
               <span
                 className="w-7 h-7 rounded-xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm"
                 style={{
@@ -547,46 +554,65 @@ function AreaBlock({
               <span className="text-[10px] font-semibold text-black/50 uppercase tracking-[0.12em]">
                 {area.reactivos} reactivos
               </span>
-            </div>
-            <h3 className="font-bold text-black text-lg tracking-tight leading-snug">
+            </span>
+            <span className="block font-bold text-black text-lg tracking-tight leading-snug">
               {area.nombre}
-            </h3>
-          </div>
+            </span>
+          </span>
 
-          <div className="text-right flex-shrink-0">
-            <p className="text-3xl font-bold text-black tracking-tight tabular-nums">
+          <span className="text-right flex-shrink-0">
+            <span className="block text-3xl font-bold text-black tracking-tight tabular-nums">
               {porcentaje}
               <span className="text-base text-black/30 ml-0.5">%</span>
-            </p>
-            <p className="text-[11px] text-black/40 font-medium tabular-nums">
+            </span>
+            <span className="block text-[11px] text-black/40 font-medium tabular-nums">
               {completados} / {totalTemas}
-            </p>
-          </div>
-        </div>
+            </span>
+          </span>
+        </span>
 
-        <div className="h-1.5 bg-black/[0.05] rounded-full overflow-hidden mt-4 shadow-inner">
-          <div
+        <span className="relative mt-4 flex h-1.5 overflow-hidden rounded-full bg-slate-700/80 shadow-inner">
+          <span
             className="h-full rounded-full transition-all duration-700 ease-out"
             style={{
               width: `${porcentaje}%`,
               background: `linear-gradient(90deg, ${area.color}, ${area.color}DD)`,
             }}
           />
-        </div>
-      </div>
+        </span>
+        <span className="relative mt-3 flex items-center justify-end gap-2 text-xs font-medium text-slate-400">
+          {expandida ? 'Ocultar subtemas' : 'Expandir subtemas'}
+          <svg
+            aria-hidden="true"
+            className={`h-4 w-4 transition-transform ${expandida ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </span>
+      </button>
 
       {/* Subáreas */}
-      <div className="divide-y divide-black/[0.05]">
-        {area.subareas.map((sub) => (
-          <SubareaBlock
-            key={sub.id}
-            subarea={sub}
-            checked={checked}
-            onToggle={onToggle}
-            color={area.color}
-          />
-        ))}
-      </div>
+      {expandida && (
+        <div className="divide-y divide-black/[0.05]">
+          {area.subareas.map((sub) => (
+            <SubareaBlock
+              key={sub.id}
+              subarea={sub}
+              checked={checked}
+              onToggle={onToggle}
+              color={area.color}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -162,23 +162,24 @@ export default async function SubareaPage({ params }: Props) {
               </h2>
             </div>
 
-            <div className="px-6 md:px-8 py-6 prose prose-slate max-w-none
-              prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-black
+                        <div className="px-6 md:px-8 py-6 prose prose-invert max-w-none
+              prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-slate-100
               prose-h1:text-2xl prose-h1:mt-6 prose-h1:mb-4
-              prose-h2:text-xl prose-h2:mt-7 prose-h2:mb-3 prose-h2:pb-2 prose-h2:border-b prose-h2:border-black/5
-              prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2 prose-h3:text-[#007AFF]
-              prose-p:leading-relaxed prose-p:text-black/80 prose-p:my-3
-              prose-strong:text-black prose-strong:font-semibold
-              prose-code:bg-[#F2F2F7] prose-code:text-[#5856D6] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-[0.9em] prose-code:font-medium prose-code:before:content-none prose-code:after:content-none
-              prose-pre:bg-[#1C1C1E] prose-pre:rounded-2xl prose-pre:p-5 prose-pre:overflow-x-auto prose-pre:shadow-lg
-              prose-ul:my-4 prose-ul:pl-5 prose-li:my-1.5 prose-li:text-black/80 prose-li:marker:text-[#007AFF]
+              prose-h2:text-xl prose-h2:mt-7 prose-h2:mb-3 prose-h2:pb-2 prose-h2:border-b prose-h2:border-white/10
+              prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2 prose-h3:text-[#5AC8FA]
+              prose-p:leading-relaxed prose-p:text-slate-300 prose-p:my-3
+              prose-strong:text-white prose-strong:font-semibold
+              prose-code:bg-slate-800/80 prose-code:text-cyan-300 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-[0.9em] prose-code:font-medium prose-code:before:content-none prose-code:after:content-none
+              prose-pre:bg-[#0F172A] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-2xl prose-pre:p-5 prose-pre:overflow-x-auto prose-pre:shadow-lg
+              prose-ul:my-4 prose-ul:pl-5 prose-li:my-1.5 prose-li:text-slate-300 prose-li:marker:text-[#5AC8FA]
               prose-ol:my-4 prose-ol:pl-5
-              prose-blockquote:border-l-4 prose-blockquote:border-[#007AFF] prose-blockquote:bg-[#007AFF]/5 prose-blockquote:py-2 prose-blockquote:px-5 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-black/80 prose-blockquote:font-normal
-              prose-table:my-5 prose-table:rounded-xl prose-table:overflow-hidden prose-table:shadow-sm prose-table:border prose-table:border-black/5
-              prose-thead:bg-[#F2F2F7] prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:text-sm prose-th:font-semibold prose-th:text-black
-              prose-td:px-4 prose-td:py-3 prose-td:text-sm prose-td:text-black/80 prose-td:border-t prose-td:border-black/5
-              prose-hr:my-6 prose-hr:border-black/10
-              prose-a:text-[#007AFF] prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+              prose-blockquote:border-l-4 prose-blockquote:border-[#007AFF] prose-blockquote:bg-[#007AFF]/10 prose-blockquote:py-2 prose-blockquote:px-5 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-300 prose-blockquote:font-normal
+              prose-table:my-6 prose-table:w-full prose-table:text-sm prose-table:rounded-xl prose-table:overflow-hidden prose-table:border prose-table:border-white/10 prose-table:shadow-xl
+              prose-thead:bg-white/5 prose-th:px-5 prose-th:py-4 prose-th:text-left prose-th:font-semibold prose-th:text-slate-100
+              prose-td:px-5 prose-td:py-4 prose-td:text-slate-300 prose-td:border-t prose-td:border-white/5
+              prose-tr:transition-colors hover:prose-tr:bg-white/[0.02]
+              prose-hr:my-8 prose-hr:border-white/10
+              prose-a:text-[#5AC8FA] prose-a:font-medium prose-a:no-underline hover:prose-a:underline
               prose-img:rounded-xl prose-img:shadow-md">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {l.contenido}

@@ -12,7 +12,8 @@
     "db:studio": "dotenv -e .env.local -- drizzle-kit studio",
     "db:seed": "dotenv -e .env.local -- tsx src/db/seed.ts",
     "db:seed-preguntas": "dotenv -e .env.local -- tsx src/db/seed-preguntas.ts",
-    "db:seed-descripciones": "dotenv -e .env.local -- tsx src/db/seed-descripciones.ts"
+    "db:seed-descripciones": "dotenv -e .env.local -- tsx src/db/seed-descripciones.ts",
+    "importar": "dotenv -e .env.local -- tsx scripts/importar.ts"
   },
   "dependencies": {
     "cloudinary": "^2.11.0",
