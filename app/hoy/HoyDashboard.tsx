@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   calcularEstadisticas,
   calcularLogros,
@@ -13,8 +13,10 @@ import {
   type Logro,
 } from '@/lib/progreso';
 import Pomodoro from '@/components/Pomodoro';
+import LogroModal from '@/components/LogroModal';
 
 type Subarea = {
+  id: number;
   slug: string;
   nombre: string;
   preguntasDisponibles: number;
@@ -27,6 +29,20 @@ const estadisticasIniciales: EstadisticasProgreso = {
 };
 
 const logrosIniciales: Logro[] = calcularLogros([]);
+const FORMATO_DIA = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Mexico_City',
+});
+
+function mostrarCelebracionDeMeta() {
+  const clave = `egel-study-platform:meta-cumplida:${FORMATO_DIA.format(new Date())}`;
+  try {
+    if (window.sessionStorage.getItem(clave)) return false;
+    window.sessionStorage.setItem(clave, '1');
+  } catch {
+    return true;
+  }
+  return true;
+}
 
 export default function HoyDashboard({
   subareas,
@@ -39,11 +55,27 @@ export default function HoyDashboard({
   const [logros, setLogros] = useState(logrosIniciales);
   const [erroresPendientes, setErroresPendientes] = useState(0);
   const [metaDiaria, setMetaDiaria] = useState(10);
+  const [mostrarCelebracion, setMostrarCelebracion] = useState(false);
+  const ultimoProgresoRef = useRef<number | null>(null);
+  const metaDiariaRef = useRef(10);
 
   useEffect(() => {
     function actualizarProgreso() {
       const intentos = obtenerIntentos();
-      setEstadisticas(calcularEstadisticas(intentos));
+      const estadisticasActuales = calcularEstadisticas(intentos);
+      const preguntasHoyPrevias = ultimoProgresoRef.current;
+      const metaAlcanzada =
+        estadisticasActuales.preguntasHoy >= metaDiariaRef.current;
+      if (
+        metaAlcanzada &&
+        (preguntasHoyPrevias === null ||
+          preguntasHoyPrevias < metaDiariaRef.current) &&
+        mostrarCelebracionDeMeta()
+      ) {
+        setMostrarCelebracion(true);
+      }
+      ultimoProgresoRef.current = estadisticasActuales.preguntasHoy;
+      setEstadisticas(estadisticasActuales);
       setLogros(calcularLogros(intentos));
       const preguntasDisponibles = new Set(preguntaIds);
       setErroresPendientes(
@@ -54,7 +86,9 @@ export default function HoyDashboard({
     }
 
     const frame = window.requestAnimationFrame(() => {
-      setMetaDiaria(obtenerMetaDiaria());
+      const metaGuardada = obtenerMetaDiaria();
+      metaDiariaRef.current = metaGuardada;
+      setMetaDiaria(metaGuardada);
       actualizarProgreso();
     });
     window.addEventListener(
@@ -76,6 +110,12 @@ export default function HoyDashboard({
       resultado,
     ])
   );
+  const subareasPracticadas = subareas
+    .map((subarea) => ({
+      ...subarea,
+      resultado: precisionPorSlug.get(subarea.slug),
+    }))
+    .filter((subarea) => (subarea.resultado?.total ?? 0) > 0);
   const recomendacionConIntentos = subareas
     .map((subarea) => ({
       ...subarea,
@@ -115,6 +155,14 @@ export default function HoyDashboard({
       </header>
 
       <div className="max-w-4xl mx-auto px-5 py-8 space-y-6">
+        <LogroModal
+          abierto={mostrarCelebracion}
+          titulo="¡Meta diaria cumplida!"
+          mensaje="Tu constancia de hoy ya cuenta. Tómate un momento para reconocer el avance que hiciste."
+          detalle={`${Math.min(estadisticas.preguntasHoy, metaDiaria)} de ${metaDiaria} preguntas completadas.`}
+          textoBoton="Seguir avanzando"
+          onClose={() => setMostrarCelebracion(false)}
+        />
         <section
           className={`glass-card-strong rounded-[22px] p-6 transition-colors ${
             estadisticas.preguntasHoy >= metaDiaria
@@ -151,6 +199,7 @@ export default function HoyDashboard({
                 type="button"
                 onClick={() => {
                   const nuevaMeta = Math.max(1, metaDiaria - 1);
+                  metaDiariaRef.current = nuevaMeta;
                   setMetaDiaria(nuevaMeta);
                   guardarMetaDiaria(nuevaMeta);
                 }}
@@ -163,6 +212,7 @@ export default function HoyDashboard({
                 type="button"
                 onClick={() => {
                   const nuevaMeta = metaDiaria + 1;
+                  metaDiariaRef.current = nuevaMeta;
                   setMetaDiaria(nuevaMeta);
                   guardarMetaDiaria(nuevaMeta);
                 }}
@@ -220,8 +270,8 @@ export default function HoyDashboard({
                 ayudarte a avanzar.
               </p>
               <Link
-                href={`/banco/${recomendacionConIntentos.slug}`}
-                className="inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#5856D6] px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(0,91,210,0.65)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(0,91,210,0.55)] active:scale-[0.97]"
+                href={`/simulador?subareas=${recomendacionConIntentos.id}`}
+                className="interactive-glow inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(99,102,241,0.55)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(139,92,246,0.55)] active:scale-[0.97]"
               >
                 Practicar ahora
                 <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,8 +290,8 @@ export default function HoyDashboard({
                 una subárea según tus resultados.
               </p>
               <Link
-                href={`/banco/${recomendacionInicial.slug}`}
-                className="inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#5856D6] px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(0,91,210,0.65)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(0,91,210,0.55)] active:scale-[0.97]"
+                href={`/simulador?subareas=${recomendacionInicial.id}`}
+                className="interactive-glow inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(99,102,241,0.55)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(139,92,246,0.55)] active:scale-[0.97]"
               >
                 Practicar ahora
                 <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,12 +439,12 @@ export default function HoyDashboard({
             </p>
           </div>
 
-          {subareas.length > 0 ? (
+          {subareasPracticadas.length > 0 ? (
             <ul className="space-y-4">
-              {subareas.map((subarea) => {
-                const resultado = precisionPorSlug.get(subarea.slug);
-                const precision = resultado?.precision ?? 0;
-
+              {subareasPracticadas.map((subarea, index) => {
+                const resultado = subarea.resultado;
+                if (!resultado) return null;
+                const precision = resultado.precision;
                 return (
                   <li key={subarea.slug}>
                     <div className="flex items-center justify-between gap-4 mb-2">
@@ -416,7 +466,11 @@ export default function HoyDashboard({
                       aria-valuemax={100}
                     >
                       <div
-                        className="h-full bg-gradient-to-r from-[#007AFF] to-[#5856D6] rounded-full transition-all"
+                        className={`h-full rounded-full bg-gradient-to-r transition-all ${
+                          index % 2 === 0
+                            ? 'from-cyan-400 via-blue-500 to-violet-500'
+                            : 'from-emerald-400 via-teal-400 to-cyan-400'
+                        }`}
                         style={{ width: `${precision}%` }}
                       />
                     </div>
@@ -425,14 +479,15 @@ export default function HoyDashboard({
               })}
             </ul>
           ) : (
-            <p className="text-sm text-black/55">
-              Todavía no hay subáreas disponibles.
+            <p className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] p-5 text-sm leading-relaxed text-slate-300">
+              Aún no hay datos. ¡Haz tu primer simulacro para ver tu progreso
+              aquí!
             </p>
           )}
         </section>
 
         <Link
-          href="/banco"
+          href="/simulador"
           className="flex items-center justify-center w-full bg-gradient-to-r from-[#007AFF] to-[#5856D6] hover:opacity-95 text-white text-base font-semibold py-4 rounded-2xl tap-scale shadow-lg shadow-[#007AFF]/20 transition-opacity"
         >
           Continuar practicando

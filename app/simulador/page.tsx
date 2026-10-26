@@ -48,10 +48,10 @@ export default async function SimuladorPage() {
             Volver al inicio
           </Link>
           <h1 className="text-3xl font-bold text-black tracking-tight">
-            Simulador
+            Zona de Práctica
           </h1>
           <p className="text-sm text-black/50 mt-1">
-            Configura tu examen de práctica
+            Elige entre practicar con feedback inmediato o simular un examen cronometrado.
           </p>
         </div>
       </header>

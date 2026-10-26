@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { documentos, areas } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import GenerarPreguntas from './GenerarPreguntas';
+import EliminarDocumentoButton from '../EliminarDocumentoButton';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -31,20 +32,20 @@ export default async function DocumentoPage({ params }: Props) {
   const preview = textoLimpio.slice(0, 3000);
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200">
+    <main className="min-h-screen bg-ios-canvas">
+      <header className="glass-nav">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <Link
             href="/biblioteca"
-            className="text-sm text-blue-600 hover:underline mb-3 inline-block"
+            className="mb-3 inline-block text-sm text-blue-300 hover:text-blue-200"
           >
             ← Volver a la biblioteca
           </Link>
-          <h1 className="text-2xl font-bold text-slate-900">{doc.titulo}</h1>
-          <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold tracking-tight text-white">{doc.titulo}</h1>
+          <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-400">
             {doc.autor && <span>{doc.autor}</span>}
             {doc.areaNombre && (
-              <span className="bg-slate-100 px-2 py-0.5 rounded-full text-xs">
+              <span className="bg-white/5 px-2 py-0.5 rounded-full text-xs text-slate-300">
                 {doc.areaNombre}
               </span>
             )}
@@ -53,44 +54,45 @@ export default async function DocumentoPage({ params }: Props) {
       </header>
 
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           {doc.archivoUrl && (
             <a
               href={doc.archivoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm"
+              className="rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/15 transition hover:brightness-110"
             >
               Ver PDF original
             </a>
           )}
           <Link
             href={`/biblioteca/${doc.id}/editar`}
-            className="bg-black/[0.05] hover:bg-black/[0.08] text-black/70 font-medium px-5 py-2.5 rounded-lg text-sm"
+            className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
           >
             Editar información
           </Link>
+          <EliminarDocumentoButton id={doc.id} />
         </div>
 
-        <section className="bg-white rounded-xl border border-slate-200 p-6">
+        <section className="glass-card-strong rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900">
+            <h2 className="font-semibold text-white">
               Texto extraído
             </h2>
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-slate-400">
               {textoLimpio.length.toLocaleString()} caracteres
             </span>
           </div>
 
           {doc.textoExtraido ? (
             <>
-              <pre className="whitespace-pre-wrap text-sm text-slate-700 font-sans leading-relaxed max-h-96 overflow-y-auto bg-slate-50 rounded-lg p-4 border border-slate-100">{`${preview}${textoLimpio.length > 3000 ? '\n\n...' : ''}`}</pre>
+              <pre className="max-h-96 overflow-y-auto whitespace-pre-wrap rounded-xl border border-white/10 bg-slate-950/70 p-4 font-sans text-sm leading-relaxed text-slate-300">{`${preview}${textoLimpio.length > 3000 ? '\n\n...' : ''}`}</pre>
               <p className="text-xs text-slate-400 mt-3">
                 Mostrando los primeros 3000 caracteres del texto extraído.
               </p>
             </>
           ) : (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-300">
               No se pudo extraer texto de este PDF. Puede ser un documento
               escaneado o con imágenes.
             </p>

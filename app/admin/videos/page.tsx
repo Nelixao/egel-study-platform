@@ -3,6 +3,7 @@ import { db } from '@/db';
 import { subareas, areas } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
 import { actualizarVideoSubarea } from '@/app/actions/subareas';
+import EliminarVideoButton from './EliminarVideoButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export default async function AdminVideosPage() {
     <main className="bg-ios-canvas min-h-screen">
       <header className="glass-nav sticky top-16 z-40">
         <div className="max-w-3xl mx-auto px-5 py-4">
-          <h1 className="text-2xl font-semibold text-black tracking-tight">
+          <h1 className="text-2xl font-semibold text-white tracking-tight">
             Videos por subárea
           </h1>
           <p className="text-sm text-[#8E8E93] mt-0.5">
@@ -58,7 +59,7 @@ export default async function AdminVideosPage() {
                 'use server';
                 await actualizarVideoSubarea(formData);
               }}
-              className="divide-y divide-black/5"
+              className="divide-y divide-white/10"
             >
               <input type="hidden" name="subareaId" value={sub.id} />
               <div className="flex gap-2">
@@ -67,11 +68,11 @@ export default async function AdminVideosPage() {
                   name="videoUrl"
                   defaultValue={sub.videoUrl || ''}
                   placeholder="https://www.youtube.com/watch?v=..."
-                  className="flex-1 bg-[#F2F2F7] border-0 rounded-xl px-4 py-3 text-sm text-black placeholder-[#8E8E93] focus:outline-none focus:ring-2 focus:ring-[#007AFF]/40"
+                  className="flex-1 rounded-xl border border-slate-600/70 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-400/40"
                 />
                 <button
                   type="submit"
-                  className="bg-[#007AFF] hover:bg-[#0066DD] text-white font-semibold px-5 py-3 rounded-xl text-sm tap-scale whitespace-nowrap"
+                  className="whitespace-nowrap rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/15 transition hover:brightness-110 tap-scale"
                 >
                   {sub.videoUrl ? 'Actualizar' : 'Guardar'}
                 </button>
@@ -94,6 +95,12 @@ export default async function AdminVideosPage() {
                 </div>
               )}
             </form>
+
+            {sub.videoUrl && (
+              <div className="mt-4 border-t border-white/10 pt-4">
+                <EliminarVideoButton subareaId={sub.id} />
+              </div>
+            )}
           </section>
         ))}
       </div>

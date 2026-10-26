@@ -41,11 +41,11 @@ export default async function EditarLeccionPage({ params }: Props) {
         <div className="max-w-3xl mx-auto px-5 py-4">
           <Link
             href="/admin/lecciones"
-            className="text-sm text-[#007AFF] hover:underline mb-3 inline-block"
+            className="mb-3 inline-block text-sm text-blue-300 hover:text-blue-200"
           >
             ← Volver a lecciones
           </Link>
-          <h1 className="text-2xl font-semibold text-black tracking-tight">
+          <h1 className="text-2xl font-semibold text-white tracking-tight">
             Editar lección
           </h1>
           <p className="text-sm text-[#8E8E93] mt-0.5">{leccion.titulo}</p>
@@ -58,7 +58,7 @@ export default async function EditarLeccionPage({ params }: Props) {
             'use server';
             await actualizarLeccion(formData);
           }}
-          className="glass-card-strong rounded-[20px] overflow-hidden divide-y divide-black/5"
+          className="glass-card-strong rounded-[20px] overflow-hidden divide-y divide-white/10"
         >
           <input type="hidden" name="id" value={leccion.id} />
 
@@ -123,13 +123,13 @@ export default async function EditarLeccionPage({ params }: Props) {
           <div className="px-5 py-4 flex gap-3">
             <button
               type="submit"
-              className="flex-1 bg-[#007AFF] hover:bg-[#0066DD] text-white font-semibold py-3.5 rounded-xl tap-scale transition-all"
+              className="flex-1 rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/15 transition hover:brightness-110 tap-scale"
             >
               Guardar cambios
             </button>
             <Link
               href="/admin/lecciones"
-              className="px-5 py-3.5 rounded-xl bg-black/[0.05] text-black/70 font-medium hover:bg-black/[0.08] tap-scale transition-all"
+              className="rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 font-medium text-slate-200 transition hover:bg-white/10 tap-scale"
             >
               Cancelar
             </Link>

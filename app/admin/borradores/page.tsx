@@ -66,20 +66,20 @@ export default function BorradoresPage() {
 
   if (cargando) {
     return (
-      <main className="min-h-screen bg-slate-50 p-8">
-        <p className="text-slate-500">Cargando borradores...</p>
+      <main className="min-h-screen bg-ios-canvas p-8">
+        <p className="text-slate-400">Cargando borradores...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200">
+    <main className="min-h-screen bg-ios-canvas">
+      <header className="glass-nav">
         <div className="max-w-5xl mx-auto px-6 py-6">
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
             Borradores generados por IA
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             {borradores.length} preguntas pendientes de revisión
           </p>
         </div>
@@ -87,14 +87,14 @@ export default function BorradoresPage() {
 
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-4">
         {error && (
-          <div className="bg-red-50 text-red-700 border border-red-200 rounded-lg p-4">
+          <div className="rounded-xl border border-rose-400/30 bg-rose-400/10 p-4 text-rose-200">
             {error}
           </div>
         )}
 
         {borradores.length === 0 ? (
-          <div className="bg-white rounded-xl border border-dashed border-slate-300 p-10 text-center">
-            <p className="text-slate-500">No hay borradores pendientes.</p>
+          <div className="glass-card rounded-2xl border-dashed p-10 text-center">
+            <p className="text-slate-300">No hay borradores pendientes.</p>
             <p className="text-sm text-slate-400 mt-2">
               Sube un PDF en la Biblioteca y genera preguntas.
             </p>
@@ -103,20 +103,20 @@ export default function BorradoresPage() {
           borradores.map((b) => (
             <article
               key={b.id}
-              className="bg-white rounded-xl border border-slate-200 p-6"
+              className="glass-card-strong rounded-2xl p-6"
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                <span className="rounded-full border border-amber-300/20 bg-amber-400/10 px-2 py-1 text-xs font-medium text-amber-200">
                   Borrador #{b.id}
                 </span>
                 {b.areaNombre && (
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-400">
                     {b.areaNombre} → {b.subareaNombre}
                   </span>
                 )}
               </div>
 
-              <p className="text-slate-800 font-medium mb-4">{b.enunciado}</p>
+              <p className="mb-4 font-medium text-slate-100">{b.enunciado}</p>
 
               <ul className="space-y-2 mb-4">
                 {[
@@ -128,37 +128,37 @@ export default function BorradoresPage() {
                     key={op.letra}
                     className={`flex gap-3 p-3 rounded-lg border ${
                       op.letra === b.respuestaCorrecta
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-slate-50 border-slate-200'
+                        ? 'border-emerald-400/30 bg-emerald-400/10'
+                        : 'border-white/10 bg-white/[0.03]'
                     }`}
                   >
-                    <span className="font-semibold text-slate-700">
+                    <span className="font-semibold text-slate-300">
                       {op.letra})
                     </span>
-                    <span className="text-slate-700">{op.texto}</span>
+                    <span className="text-slate-300">{op.texto}</span>
                   </li>
                 ))}
               </ul>
 
               {b.explicacion && (
-                <div className="mb-4 pt-3 border-t border-slate-100">
-                  <p className="text-xs font-semibold text-slate-500 mb-1">
+                <div className="mb-4 border-t border-white/10 pt-3">
+                  <p className="mb-1 text-xs font-semibold text-slate-400">
                     Explicación
                   </p>
-                  <p className="text-sm text-slate-600">{b.explicacion}</p>
+                  <p className="text-sm text-slate-300">{b.explicacion}</p>
                 </div>
               )}
 
               <div className="flex gap-3">
                 <button
                   onClick={() => aprobar(b.id)}
-                  className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg"
+                  className="rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:brightness-110"
                 >
-                  ✓ Aprobar
+                  Aprobar
                 </button>
                 <button
                   onClick={() => descartar(b.id)}
-                  className="border border-red-300 text-red-700 hover:bg-red-50 text-sm font-medium px-4 py-2 rounded-lg"
+                  className="rounded-xl border border-rose-400/30 px-4 py-2 text-sm font-medium text-rose-200 transition hover:bg-rose-400/10"
                 >
                   Descartar
                 </button>

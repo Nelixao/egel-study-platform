@@ -41,45 +41,48 @@ export default function UploadForm({ areas }: { areas: Area[] }) {
   }
 
   return (
-    <section className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-900 mb-4">
+    <section
+      id="formulario-subir-pdf"
+      className="glass-card-strong rounded-2xl p-6"
+    >
+      <h2 className="text-lg font-semibold text-white mb-4">
         Subir documento
       </h2>
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-slate-200 mb-1">
               Título *
             </label>
             <input
               type="text"
               name="titulo"
               required
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-xl border border-slate-600 bg-slate-900/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
               placeholder="Ej. Ingeniería del software"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-slate-200 mb-1">
               Autor
             </label>
             <input
               type="text"
               name="autor"
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-xl border border-slate-600 bg-slate-900/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
               placeholder="Ej. Roger Pressman"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label className="block text-sm font-medium text-slate-200 mb-1">
             Área relacionada
           </label>
           <select
             name="areaId"
-            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-xl border border-slate-600 bg-slate-900/80 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
           >
             <option value="">Sin especificar</option>
             {areas.map((a) => (
@@ -91,7 +94,7 @@ export default function UploadForm({ areas }: { areas: Area[] }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label className="block text-sm font-medium text-slate-200 mb-1">
             Archivo PDF * (máx. 50 MB)
           </label>
           <input
@@ -99,7 +102,7 @@ export default function UploadForm({ areas }: { areas: Area[] }) {
             name="file"
             accept=".pdf,application/pdf"
             required
-            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-blue-50 file:text-blue-700 file:font-medium hover:file:bg-blue-100"
+            className="w-full rounded-xl border border-slate-600 bg-slate-900/80 px-3 py-2 text-sm text-slate-200 file:mr-4 file:rounded-md file:border-0 file:bg-blue-400/15 file:px-3 file:py-1 file:font-medium file:text-blue-200 hover:file:bg-blue-400/25"
           />
         </div>
 
@@ -107,8 +110,8 @@ export default function UploadForm({ areas }: { areas: Area[] }) {
           <div
             className={`text-sm rounded-lg p-3 ${
               mensaje.tipo === 'ok'
-                ? 'bg-green-50 text-green-700 border border-green-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
+                ? 'border border-emerald-400/30 bg-emerald-400/10 text-emerald-200'
+                : 'border border-rose-400/30 bg-rose-400/10 text-rose-200'
             }`}
           >
             {mensaje.texto}
@@ -118,7 +121,7 @@ export default function UploadForm({ areas }: { areas: Area[] }) {
         <button
           type="submit"
           disabled={subiendo}
-          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
+          className="rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 px-6 py-2.5 font-semibold text-white shadow-lg shadow-blue-500/15 transition hover:brightness-110 disabled:opacity-50"
         >
           {subiendo ? 'Subiendo...' : 'Subir PDF'}
         </button>

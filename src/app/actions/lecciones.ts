@@ -10,11 +10,11 @@ export async function crearLeccion(formData: FormData) {
   await requireAdmin();
 
   const subareaId = Number(formData.get('subareaId'));
-  const titulo = formData.get('titulo') as string;
-  const contenido = formData.get('contenido') as string;
+  const titulo = String(formData.get('titulo') ?? '').trim();
+  const contenido = String(formData.get('contenido') ?? '').trim();
   const orden = Number(formData.get('orden') || 0);
 
-  if (!subareaId || !titulo || !contenido) {
+  if (!Number.isInteger(subareaId) || subareaId < 1 || !titulo || !contenido || !Number.isInteger(orden)) {
     return { error: 'Faltan campos obligatorios' };
   }
 
@@ -26,14 +26,30 @@ export async function crearLeccion(formData: FormData) {
   });
 
   revalidatePath('/admin/lecciones');
+  revalidatePath('/subarea/[slug]', 'page');
   return { success: true };
 }
 
 export async function eliminarLeccion(id: number) {
   await requireAdmin();
 
+  if (!Number.isInteger(id) || id < 1) {
+    return { error: 'El identificador de la lección no es válido' };
+  }
+
+  const [leccion] = await db
+    .select({ id: lecciones.id })
+    .from(lecciones)
+    .where(eq(lecciones.id, id))
+    .limit(1);
+
+  if (!leccion) {
+    return { error: 'No se encontró la lección' };
+  }
+
   await db.delete(lecciones).where(eq(lecciones.id, id));
   revalidatePath('/admin/lecciones');
+  revalidatePath('/subarea/[slug]', 'page');
   return { success: true };
 }
 export async function actualizarLeccion(formData: FormData) {
@@ -41,20 +57,34 @@ export async function actualizarLeccion(formData: FormData) {
 
   const id = Number(formData.get('id'));
   const subareaId = Number(formData.get('subareaId'));
-  const titulo = formData.get('titulo') as string;
-  const contenido = formData.get('contenido') as string;
+  const titulo = String(formData.get('titulo') ?? '').trim();
+  const contenido = String(formData.get('contenido') ?? '').trim();
   const orden = Number(formData.get('orden') || 0);
 
-  if (!id || !subareaId || !titulo || !contenido) {
+  if (
+    !Number.isInteger(id) ||
+    id < 1 ||
+    !Number.isInteger(subareaId) ||
+    subareaId < 1 ||
+    !titulo ||
+    !contenido ||
+    !Number.isInteger(orden)
+  ) {
     return { error: 'Faltan campos obligatorios' };
   }
 
-  await db
+  const resultado = await db
     .update(lecciones)
     .set({ subareaId, titulo, contenido, orden })
-    .where(eq(lecciones.id, id));
+    .where(eq(lecciones.id, id))
+    .returning({ id: lecciones.id });
+
+  if (resultado.length === 0) {
+    return { error: 'No se encontró la lección' };
+  }
 
   revalidatePath('/admin/lecciones');
   revalidatePath('/admin/lecciones/' + id + '/editar');
+  revalidatePath('/subarea/[slug]', 'page');
   return { success: true };
 }

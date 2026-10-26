@@ -11,6 +11,7 @@ export default async function HoyPage() {
   const [todasSubareas, preguntasDisponibles] = await Promise.all([
     db
       .select({
+        id: subareas.id,
         slug: subareas.slug,
         nombre: subareas.nombre,
         preguntasDisponibles: sql<number>`count(${preguntas.id})::int`,

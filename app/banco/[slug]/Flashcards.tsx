@@ -30,16 +30,21 @@ export default function Flashcards({
 }) {
   const [indice, setIndice] = useState(0);
   const [opcionSel, setOpcionSel] = useState<string | null>(null);
+  const [preguntasRespondidas, setPreguntasRespondidas] = useState<Set<number>>(
+    () => new Set()
+  );
 
   const p = preguntas[indice];
   const total = preguntas.length;
   const respondida = opcionSel !== null;
   const esCorrecta = opcionSel === p.respuestaCorrecta;
+  const porcentajeRespondido =
+    total > 0 ? (preguntasRespondidas.size / total) * 100 : 0;
 
   const dificultadColor: Record<string, { bg: string; text: string }> = {
-    facil: { bg: 'rgba(52, 199, 89, 0.1)', text: '#34C759' },
-    media: { bg: 'rgba(255, 149, 0, 0.1)', text: '#FF9500' },
-    dificil: { bg: 'rgba(255, 59, 48, 0.1)', text: '#FF3B30' },
+    facil: { bg: 'rgba(52, 199, 89, 0.15)', text: '#34C759' },
+    media: { bg: 'rgba(255, 149, 0, 0.15)', text: '#FF9500' },
+    dificil: { bg: 'rgba(255, 59, 48, 0.15)', text: '#FF3B30' },
   };
   const color = dificultadColor[p.dificultad || 'media'];
 
@@ -60,18 +65,27 @@ export default function Flashcards({
   function reiniciar() {
     setIndice(0);
     setOpcionSel(null);
+    setPreguntasRespondidas(new Set());
   }
 
   function elegir(letra: string) {
     if (respondida) return;
     setOpcionSel(letra);
-    const correcta = letra === p.respuestaCorrecta;
-    guardarIntento({
-      subareaSlug: p.subareaSlug ?? subareaSlug ?? '',
-      preguntaId: p.id,
-      correcta,
-      fecha: new Date().toISOString(),
+    setPreguntasRespondidas((actuales) => {
+      const actualizadas = new Set(actuales);
+      actualizadas.add(p.id);
+      return actualizadas;
     });
+    const correcta = letra === p.respuestaCorrecta;
+    const slug = p.subareaSlug ?? subareaSlug;
+    if (slug) {
+      guardarIntento({
+        subareaSlug: slug,
+        preguntaId: p.id,
+        correcta,
+        fecha: new Date().toISOString(),
+      });
+    }
     onRespuesta?.(p.id, correcta);
   }
 
@@ -79,11 +93,14 @@ export default function Flashcards({
     <div className="space-y-5">
       {/* Barra de progreso */}
       <div className="glass-card-strong rounded-[20px] p-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-mono text-black/60">
-              {String(indice + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+            <span className="text-sm font-mono text-slate-400">
+            {preguntasRespondidas.size} / {total} respondidas
             </span>
+          <span className="text-xs text-slate-500">
+            Pregunta {String(indice + 1).padStart(2, '0')}
+          </span>
             <span
               className="text-xs font-semibold px-2.5 py-1 rounded-md capitalize"
               style={{ backgroundColor: color.bg, color: color.text }}
@@ -91,22 +108,29 @@ export default function Flashcards({
               {p.dificultad || 'media'}
             </span>
           </div>
-          <span className="text-xs font-semibold text-black/50">
-            {Math.round(((indice + 1) / total) * 100)}%
+          <span className="text-xs font-semibold text-slate-400">
+            {Math.round(porcentajeRespondido)}%
           </span>
         </div>
 
-        <div className="h-1.5 bg-black/[0.05] rounded-full overflow-hidden">
+        <div
+          className="h-1.5 overflow-hidden rounded-full bg-white/10"
+          role="progressbar"
+          aria-label="Preguntas respondidas en esta sesión"
+          aria-valuenow={preguntasRespondidas.size}
+          aria-valuemin={0}
+          aria-valuemax={total}
+        >
           <div
-            className="h-full bg-gradient-to-r from-[#007AFF] to-[#5856D6] transition-all duration-300"
-            style={{ width: `${((indice + 1) / total) * 100}%` }}
+            className="h-full rounded-full bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-300 shadow-[0_0_12px_rgba(99,102,241,0.5)] transition-all duration-300"
+            style={{ width: `${porcentajeRespondido}%` }}
           />
         </div>
       </div>
 
       {/* Tarjeta */}
       <div className="glass-card-strong rounded-[22px] p-6 md:p-8 animate-slide-up">
-        <p className="text-lg font-medium text-black leading-relaxed mb-6">
+        <p className="text-lg font-medium text-slate-100 leading-relaxed mb-6">
           {p.enunciado}
         </p>
 
@@ -120,14 +144,16 @@ export default function Flashcards({
             const esLaCorrecta = op.letra === p.respuestaCorrecta;
 
             let clase =
-              'bg-white/60 border-black/5 hover:border-black/15 hover:bg-white';
+              'bg-white/5 border-white/10 hover:border-indigo-300/40 hover:bg-white/10';
             if (respondida) {
               if (esLaCorrecta) {
-                clase = 'bg-[#34C759]/10 border-[#34C759]/40';
+                clase =
+                  'bg-emerald-500/20 border-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.2)]';
               } else if (seleccionada && !esLaCorrecta) {
-                clase = 'bg-[#FF3B30]/10 border-[#FF3B30]/40';
+                clase =
+                  'bg-rose-500/20 border-rose-500 shadow-[0_0_18px_rgba(244,63,94,0.18)]';
               } else {
-                clase = 'bg-white/40 border-black/5 opacity-60';
+                clase = 'bg-white/5 border-white/5 opacity-50';
               }
             }
 
@@ -136,17 +162,18 @@ export default function Flashcards({
                 key={op.letra}
                 onClick={() => elegir(op.letra)}
                 disabled={respondida}
-                className={`w-full text-left flex gap-4 p-4 rounded-2xl border transition-all tap-scale ${clase}`}
+                aria-pressed={seleccionada}
+                className={`answer-option w-full text-left flex gap-4 p-4 rounded-2xl border transition-all duration-300 active:scale-105 tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
               >
                 <span
                   className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
                     respondida && esLaCorrecta
-                      ? 'bg-[#34C759] text-white'
+                      ? 'bg-emerald-500 text-white'
                       : respondida && seleccionada && !esLaCorrecta
-                      ? 'bg-[#FF3B30] text-white'
+                      ? 'bg-rose-500 text-white'
                       : seleccionada
                       ? 'bg-[#007AFF] text-white'
-                      : 'bg-black/[0.05] text-black/70'
+                      : 'bg-white/10 text-slate-300'
                   }`}
                 >
                   {respondida && esLaCorrecta ? (
@@ -161,7 +188,7 @@ export default function Flashcards({
                     op.letra
                   )}
                 </span>
-                <span className="text-black/85 pt-1">{op.texto}</span>
+                <span className="text-slate-200 pt-1">{op.texto}</span>
               </button>
             );
           })}
@@ -169,29 +196,25 @@ export default function Flashcards({
 
         {/* Feedback */}
         {respondida && (
-          <div
-            className={`mt-6 pt-5 border-t border-black/5 animate-slide-up ${
-              esCorrecta ? '' : ''
-            }`}
-          >
+          <div className="mt-6 pt-5 border-t border-white/10 animate-slide-up">
             <div className="flex items-center gap-2 mb-3">
               <span
                 className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
                   esCorrecta
-                    ? 'bg-[#34C759]/10 text-[#34C759]'
-                    : 'bg-[#FF3B30]/10 text-[#FF3B30]'
+                    ? 'bg-emerald-500/15 text-emerald-400'
+                    : 'bg-rose-500/15 text-rose-400'
                 }`}
               >
                 {esCorrecta ? 'Correcta' : 'Incorrecta'}
               </span>
               {!esCorrecta && (
-                <span className="text-xs text-black/50">
-                  La respuesta correcta es <strong className="text-black">{p.respuestaCorrecta}</strong>
+                <span className="text-xs text-slate-400">
+                  La respuesta correcta es <strong className="text-slate-200">{p.respuestaCorrecta}</strong>
                 </span>
               )}
             </div>
             {p.explicacion && (
-              <p className="text-sm text-black/75 leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 {p.explicacion}
               </p>
             )}
@@ -204,14 +227,14 @@ export default function Flashcards({
         <button
           onClick={anterior}
           disabled={indice === 0}
-          className="px-5 py-3 rounded-2xl bg-white/60 backdrop-blur-md border border-black/5 text-black/70 text-sm font-medium disabled:opacity-40 hover:bg-white tap-scale"
+          className="interactive-glow px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-slate-300 text-sm font-medium disabled:opacity-40 hover:bg-white/10 tap-scale"
         >
           ← Anterior
         </button>
 
         <button
           onClick={reiniciar}
-          className="text-xs font-medium text-black/50 hover:text-[#007AFF] transition-colors"
+          className="text-xs font-medium text-slate-400 hover:text-[#007AFF] transition-colors"
         >
           Reiniciar
         </button>
@@ -219,14 +242,14 @@ export default function Flashcards({
         {indice === total - 1 ? (
           <button
             onClick={onComplete ?? reiniciar}
-            className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#007AFF] to-[#5856D6] text-white text-sm font-semibold tap-scale shadow-md shadow-[#007AFF]/20"
+            className="interactive-glow px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold tap-scale shadow-md shadow-indigo-500/20"
           >
             {onCompleteLabel ?? (onComplete ? 'Continuar' : 'Volver al inicio')}
           </button>
         ) : (
           <button
             onClick={siguiente}
-            className="px-5 py-3 rounded-2xl bg-[#007AFF] text-white text-sm font-semibold hover:bg-[#0066DD] tap-scale shadow-md shadow-[#007AFF]/20"
+            className="interactive-glow px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold tap-scale shadow-md shadow-indigo-500/20"
           >
             Siguiente →
           </button>
@@ -245,7 +268,7 @@ export default function Flashcards({
             className={`w-2 h-2 rounded-full transition-all ${
               i === indice
                 ? 'bg-[#007AFF] w-6'
-                : 'bg-black/15 hover:bg-black/30'
+                : 'bg-white/20 hover:bg-white/40'
             }`}
             aria-label={`Ir a pregunta ${i + 1}`}
           />

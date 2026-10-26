@@ -1,9 +1,11 @@
 export const dynamic = 'force-dynamic';
 
+import Link from 'next/link';
 import { db } from '@/db';
 import { subareas, areas, preguntas } from '@/db/schema';
 import { asc, eq, desc } from 'drizzle-orm';
 import { crearPregunta } from '@/app/actions/preguntas';
+import EliminarPreguntaButton from './EliminarPreguntaButton';
 
 export default async function AdminPreguntasPage() {
   const todasSubareas = await db
@@ -17,17 +19,24 @@ export default async function AdminPreguntasPage() {
     .orderBy(asc(areas.orden), asc(subareas.id));
 
   const ultimasPreguntas = await db
-    .select()
+    .select({
+      id: preguntas.id,
+      enunciado: preguntas.enunciado,
+      respuestaCorrecta: preguntas.respuestaCorrecta,
+      dificultad: preguntas.dificultad,
+      subareaNombre: subareas.nombre,
+    })
     .from(preguntas)
+    .leftJoin(subareas, eq(preguntas.subareaId, subareas.id))
     .orderBy(desc(preguntas.id))
     .limit(10);
 
   return (
-    <main className="min-h-screen bg-[#F2F2F7]">
+    <main className="min-h-screen bg-ios-canvas">
       {/* Header estilo iOS */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-black/5 sticky top-16 z-40">
+      <header className="glass-nav sticky top-16 z-40">
         <div className="max-w-3xl mx-auto px-5 py-4">
-          <h1 className="text-2xl font-semibold text-black tracking-tight">
+          <h1 className="text-2xl font-semibold text-white tracking-tight">
             Preguntas
           </h1>
           <p className="text-sm text-[#8E8E93] mt-0.5">
@@ -38,7 +47,7 @@ export default async function AdminPreguntasPage() {
 
       <div className="max-w-3xl mx-auto px-5 py-6 space-y-6">
         {/* Formulario agrupado estilo iOS Settings */}
-        <section className="bg-white rounded-[20px] overflow-hidden">
+        <section className="glass-card-strong rounded-[20px] overflow-hidden">
           <div className="px-5 pt-5 pb-2">
             <h2 className="text-sm font-semibold text-[#8E8E93] uppercase tracking-wide">
               Nueva pregunta
@@ -50,7 +59,7 @@ export default async function AdminPreguntasPage() {
               'use server';
               await crearPregunta(formData);
             }}
-            className="divide-y divide-black/5"
+            className="divide-y divide-white/10"
           >
             {/* Subárea */}
             <div className="px-5 py-4">
@@ -167,8 +176,8 @@ export default async function AdminPreguntasPage() {
         </section>
 
         {/* Lista de últimas preguntas estilo iOS */}
-        <section className="bg-white rounded-[20px] overflow-hidden">
-          <div className="px-5 pt-5 pb-3 border-b border-black/5">
+        <section className="glass-card-strong rounded-[20px] overflow-hidden">
+          <div className="px-5 pt-5 pb-3 border-b border-white/10">
             <h2 className="text-sm font-semibold text-[#8E8E93] uppercase tracking-wide">
               Últimas 10 agregadas
             </h2>
@@ -181,7 +190,7 @@ export default async function AdminPreguntasPage() {
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-black/5">
+            <ul className="divide-y divide-white/10">
               {ultimasPreguntas.map((p) => {
                 const colores: Record<string, string> = {
                   facil: 'bg-[#34C759]',
@@ -191,7 +200,7 @@ export default async function AdminPreguntasPage() {
                 const color = colores[p.dificultad || 'media'] || 'bg-[#8E8E93]';
 
                 return (
-                  <li key={p.id} className="px-5 py-4 hover:bg-black/[0.02] transition-colors">
+                  <li key={p.id} className="px-5 py-4 hover:bg-white/[0.03] transition-colors">
                     <div className="flex items-start gap-3">
                       <div className={`w-2 h-2 rounded-full ${color} mt-2 flex-shrink-0`} />
                       <div className="flex-1 min-w-0">
@@ -205,7 +214,21 @@ export default async function AdminPreguntasPage() {
                           <span className="text-xs text-[#8E8E93] capitalize">
                             {p.dificultad}
                           </span>
+                          {p.subareaNombre && (
+                            <span className="truncate text-xs text-slate-400">
+                              {p.subareaNombre}
+                            </span>
+                          )}
                         </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <Link
+                          href={`/admin/preguntas/${p.id}/editar`}
+                          className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-blue-300 transition hover:bg-blue-400/10"
+                        >
+                          Editar
+                        </Link>
+                        <EliminarPreguntaButton id={p.id} />
                       </div>
                     </div>
                   </li>

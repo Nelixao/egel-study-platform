@@ -283,7 +283,6 @@ Explicación del concepto...
                       <form
                         action={async () => {
                           'use server';
-                          'use server';
                           await eliminarLeccion(l.id);
                         }}
                       >

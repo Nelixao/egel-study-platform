@@ -7,10 +7,8 @@ import { cerrarSesion } from '@/app/actions/auth';
 
 const publicLinks = [
   { href: '/', label: 'Inicio' },
-  { href: '/simulador', label: 'Simulador' },
-  { href: '/temas', label: 'Temas' },
   { href: '/temario', label: 'Temario' },
-  { href: '/banco', label: 'Banco de preguntas' },
+  { href: '/simulador', label: 'Zona de Práctica' },
   { href: '/hoy', label: 'Hoy' },
 ];
 
@@ -97,12 +95,6 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  href="/simulador"
-                  className="hidden sm:inline-flex items-center gap-1.5 bg-[#007AFF] hover:bg-[#0066DD] text-white text-sm font-semibold px-4 py-2 rounded-full tap-scale shadow-md shadow-[#007AFF]/20"
-                >
-                  Practicar
-                </Link>
                 <Link
                   href="/admin"
                   className="hidden sm:inline-flex items-center gap-1.5 text-sm text-black/60 hover:text-black px-3 py-2 rounded-full transition-colors"
