@@ -35,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${inter.className} bg-ios-canvas min-h-screen flex flex-col`}>
+      <body className={`${inter.className} bg-ios-canvas min-h-screen flex flex-col overflow-x-hidden`}>
         <Navbar />
         <div className="flex-1">{children}</div>
         <Footer />

@@ -242,7 +242,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
               <button
                 type="button"
                 onClick={seleccionarTodas}
-                className="text-xs font-semibold text-[#007AFF] hover:bg-[#007AFF]/10 px-2.5 py-1.5 rounded-lg transition-colors tap-scale"
+                className="min-h-12 px-3 text-sm font-semibold text-[#60A5FA] hover:bg-[#007AFF]/10 rounded-lg transition-colors tap-scale"
               >
                 Seleccionar todo
               </button>
@@ -250,7 +250,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                 <button
                   type="button"
                   onClick={limpiarSeleccion}
-                  className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-400 transition-colors hover:bg-slate-700/60 hover:text-slate-200 tap-scale"
+                  className="min-h-12 rounded-lg px-3 text-sm font-semibold text-slate-300 transition-colors hover:bg-slate-700/60 hover:text-white tap-scale"
                 >
                   Limpiar
                 </button>
@@ -276,7 +276,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                           return (
                             <label
                               key={sub.id}
-                              className={`flex items-center gap-3 text-sm cursor-pointer px-3.5 py-2.5 rounded-xl transition-all tap-scale ${
+                              className={`flex min-h-12 items-center gap-3 text-base cursor-pointer px-3.5 py-3 rounded-xl transition-all tap-scale ${
                                 activa
                                   ? 'bg-cyan-400/10 font-medium text-cyan-200'
                                   : 'bg-slate-800/60 text-slate-300 hover:bg-slate-700/70'
@@ -329,7 +329,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
         <section className="glass-card-strong rounded-[22px] p-6 animate-slide-up">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-semibold text-black mb-3">
+              <label className="block text-sm font-semibold text-slate-100 mb-3">
                 Número de preguntas
               </label>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -338,10 +338,10 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                     key={n}
                     type="button"
                     onClick={() => setCantidad(n)}
-                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all tap-scale ${
+                    className={`min-h-12 px-4 py-2 rounded-xl text-sm font-semibold transition-all tap-scale ${
                       cantidad === n
                         ? 'bg-[#007AFF] text-white shadow-md shadow-[#007AFF]/20'
-                        : 'bg-black/[0.05] text-black/70 hover:bg-black/[0.08]'
+                        : 'bg-slate-700/70 text-slate-200 hover:bg-slate-600/80'
                     }`}
                   >
                     {n}
@@ -354,11 +354,11 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                 max={200}
                 value={cantidad}
                 onChange={(e) => setCantidad(Number(e.target.value))}
-                className="w-full bg-[#F2F2F7] border-0 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007AFF]/40"
+                className="min-h-12 w-full bg-slate-900/80 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#007AFF]/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-black mb-3">
+              <label className="block text-sm font-semibold text-slate-100 mb-3">
                 Duración del examen (minutos)
               </label>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -367,10 +367,10 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                     key={m}
                     type="button"
                     onClick={() => setMinutos(m)}
-                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all tap-scale ${
+                    className={`min-h-12 px-4 py-2 rounded-xl text-sm font-semibold transition-all tap-scale ${
                       minutos === m
                         ? 'bg-[#007AFF] text-white shadow-md shadow-[#007AFF]/20'
-                        : 'bg-black/[0.05] text-black/70 hover:bg-black/[0.08]'
+                        : 'bg-slate-700/70 text-slate-200 hover:bg-slate-600/80'
                     }`}
                   >
                     {m}
@@ -383,7 +383,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                 max={240}
                 value={minutos}
                 onChange={(e) => setMinutos(Number(e.target.value))}
-                className="w-full bg-[#F2F2F7] border-0 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007AFF]/40"
+                className="min-h-12 w-full bg-slate-900/80 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#007AFF]/50"
               />
             </div>
           </div>
@@ -402,7 +402,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           <button
             type="button"
             onClick={() => void iniciar('practica')}
-            className="interactive-glow group rounded-[22px] border border-emerald-400/20 bg-gradient-to-br from-emerald-500/15 to-cyan-500/10 p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/50 hover:shadow-[0_0_24px_rgba(16,185,129,0.2)]"
+            className="interactive-glow group min-h-12 rounded-[22px] border border-emerald-400/20 bg-gradient-to-br from-emerald-500/15 to-cyan-500/10 p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/50 hover:shadow-[0_0_24px_rgba(16,185,129,0.2)]"
           >
             <span className="flex items-center gap-3 text-base font-bold text-white">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-400/15 text-emerald-300">
@@ -430,7 +430,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           <button
             type="button"
             onClick={() => void iniciar('examen')}
-            className="interactive-glow group rounded-[22px] border border-indigo-400/25 bg-gradient-to-br from-indigo-500/20 to-violet-500/10 p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300/55 hover:shadow-[0_0_24px_rgba(99,102,241,0.25)]"
+            className="interactive-glow group min-h-12 rounded-[22px] border border-indigo-400/25 bg-gradient-to-br from-indigo-500/20 to-violet-500/10 p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300/55 hover:shadow-[0_0_24px_rgba(99,102,241,0.25)]"
           >
             <span className="flex items-center gap-3 text-base font-bold text-white">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-400/15 text-indigo-300">
@@ -468,7 +468,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
 
     return (
       <div className="space-y-5">
-        <div className="glass-card-strong rounded-[22px] p-4 flex items-center justify-between sticky top-20 z-10">
+        <div className="sticky top-20 z-50 border border-white/10 bg-slate-900/95 shadow-[0_12px_30px_rgba(15,23,42,0.45)] backdrop-blur-md rounded-[22px] p-4 flex items-center justify-between">
           <div className="text-sm text-slate-400">
             {modo === 'practica' && (
               <span className="mr-3 font-semibold text-emerald-300">
@@ -495,8 +495,8 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           )}
         </div>
 
-        <div className="glass-card-strong rounded-[22px] p-6 md:p-8">
-          <p className="text-slate-100 font-medium text-lg leading-relaxed mb-6">
+        <div className="mt-6 glass-card-strong rounded-[22px] p-6 md:p-8">
+          <p className="text-white font-medium text-lg leading-relaxed mb-6">
             {p.enunciado}
           </p>
 
@@ -519,14 +519,14 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   key={op.letra}
                   onClick={() => responder(op.letra)}
                   disabled={modo === 'practica' && respuestas[p.id] !== undefined}
-                  className={`w-full text-left flex gap-4 p-4 rounded-2xl border transition-all tap-scale ${
+                  className={`min-h-12 w-full text-left flex gap-4 p-5 rounded-2xl border transition-all tap-scale ${
                     opcionCorrectaEnPractica
                       ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.2)]'
                       : opcionIncorrectaEnPractica
                       ? 'bg-rose-500/20 border-rose-500 shadow-[0_0_18px_rgba(244,63,94,0.18)]'
                       : seleccionada
                       ? 'bg-indigo-500/15 border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
-                      : 'bg-white/5 border-white/10 hover:border-indigo-300/40 hover:bg-white/10'
+                      : 'bg-white/10 border-white/15 hover:border-indigo-300/50 hover:bg-white/15'
                   }`}
                 >
                   <span
@@ -537,12 +537,12 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                         ? 'bg-rose-500 text-white'
                         : seleccionada
                         ? 'bg-indigo-500 text-white'
-                        : 'bg-white/10 text-slate-300'
+                        : 'bg-white/15 text-slate-100'
                     }`}
                   >
                     {op.letra}
                   </span>
-                  <span className="text-slate-200 pt-1">{op.texto}</span>
+                  <span className="text-base text-white pt-1">{op.texto}</span>
                 </button>
               );
             })}
@@ -580,14 +580,14 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           <button
             onClick={anterior}
             disabled={indice === 0}
-            className="px-5 py-3 rounded-2xl bg-white/60 backdrop-blur-md border border-black/5 text-black/70 text-sm font-medium disabled:opacity-40 hover:bg-white tap-scale"
+            className="min-h-12 px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-slate-200 text-sm font-medium disabled:opacity-40 hover:bg-white/10 tap-scale"
           >
             ← Anterior
           </button>
           {modo === 'examen' && (
             <button
               onClick={terminar}
-              className="px-5 py-3 rounded-2xl bg-rose-500/10 text-rose-300 text-sm font-semibold hover:bg-rose-500/15 tap-scale"
+              className="min-h-12 px-5 py-3 rounded-2xl bg-rose-500/10 text-rose-300 text-sm font-semibold hover:bg-rose-500/15 tap-scale"
             >
               Terminar
             </button>
@@ -595,7 +595,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           <button
             onClick={siguiente}
             disabled={modo === 'practica' && respuestas[p.id] === undefined}
-            className="interactive-glow px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold hover:brightness-110 tap-scale shadow-md shadow-indigo-500/20 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40"
+            className="interactive-glow min-h-12 px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold hover:brightness-110 tap-scale shadow-md shadow-indigo-500/20 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {indice === preguntas.length - 1
               ? modo === 'practica'
@@ -629,12 +629,12 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
         onClose={() => setMostrarCelebracion(false)}
       />
       <div className="glass-card-strong rounded-[22px] p-8 text-center animate-slide-up">
-        <p className="text-xs font-semibold text-[#8E8E93] uppercase tracking-widest mb-4">
+        <p className="text-xs font-semibold text-slate-300 uppercase tracking-widest mb-4">
           Resultado final
         </p>
-        <p className="text-6xl font-bold text-black mb-2 tracking-tight">
+        <p className="text-6xl font-bold text-white mb-2 tracking-tight">
           {correctas}
-          <span className="text-black/30">/{preguntas.length}</span>
+          <span className="text-slate-400">/{preguntas.length}</span>
         </p>
         <p
           className={`text-3xl font-bold ${
@@ -643,7 +643,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
         >
           {porcentaje}%
         </p>
-        <p className="text-sm text-black/60 mt-4">
+        <p className="text-sm text-slate-300 mt-4">
           {aprobado
             ? '¡Excelente trabajo! Sigue así.'
             : 'Necesitas más práctica. Repasa las subáreas débiles.'}
@@ -651,7 +651,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-sm font-semibold text-black/70 uppercase tracking-wide px-1">
+        <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wide px-1">
           Revisión detallada
         </h2>
         {preguntas.map((p, i) => {
@@ -666,7 +666,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
               }`}
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-mono text-black/50">
+                <span className="text-xs font-mono text-slate-400">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span
@@ -679,11 +679,11 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   {esCorrecta ? 'Correcta' : 'Incorrecta'}
                 </span>
               </div>
-              <p className="text-black font-medium mb-3 leading-snug">
+              <p className="text-white font-medium mb-3 leading-snug">
                 {p.enunciado}
               </p>
               <div className="space-y-1 text-sm mb-3">
-                <p className="text-black/60">
+                <p className="text-slate-300">
                   Tu respuesta:{' '}
                   <span
                     className={`font-bold ${
@@ -694,7 +694,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   </span>
                 </p>
                 {!esCorrecta && (
-                  <p className="text-black/60">
+                  <p className="text-slate-300">
                     Correcta:{' '}
                     <span className="font-bold text-[#34C759]">
                       {p.respuestaCorrecta}
@@ -704,10 +704,10 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
               </div>
               {p.explicacion && (
                 <div className="pt-3 border-t border-black/5">
-                  <p className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wide mb-1">
+                  <p className="text-xs font-semibold text-slate-300 uppercase tracking-wide mb-1">
                     Explicación
                   </p>
-                  <p className="text-sm text-black/70 leading-relaxed">
+                  <p className="text-sm text-slate-300 leading-relaxed">
                     {p.explicacion}
                   </p>
                 </div>
@@ -720,13 +720,13 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       <div className="flex gap-3 justify-center pt-4">
         <button
           onClick={reiniciar}
-          className="interactive-glow bg-gradient-to-r from-indigo-500 to-violet-500 hover:brightness-110 text-white font-semibold px-8 py-3.5 rounded-2xl tap-scale shadow-md shadow-indigo-500/20 transition-all duration-300"
+          className="interactive-glow min-h-12 bg-gradient-to-r from-indigo-500 to-violet-500 hover:brightness-110 text-white font-semibold px-8 py-3.5 rounded-2xl tap-scale shadow-md shadow-indigo-500/20 transition-all duration-300"
         >
           Nuevo simulador
         </button>
         <Link
           href="/"
-          className="px-8 py-3.5 rounded-2xl bg-white/60 backdrop-blur-md border border-black/5 text-black/70 font-medium hover:bg-white tap-scale"
+          className="min-h-12 px-8 py-3.5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-slate-200 font-medium hover:bg-white/10 tap-scale"
         >
           Volver al inicio
         </Link>

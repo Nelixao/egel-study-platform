@@ -130,7 +130,7 @@ export default function Flashcards({
 
       {/* Tarjeta */}
       <div className="glass-card-strong rounded-[22px] p-6 md:p-8 animate-slide-up">
-        <p className="text-lg font-medium text-slate-100 leading-relaxed mb-6">
+        <p className="text-lg font-medium text-white leading-relaxed mb-6">
           {p.enunciado}
         </p>
 
@@ -144,7 +144,7 @@ export default function Flashcards({
             const esLaCorrecta = op.letra === p.respuestaCorrecta;
 
             let clase =
-              'bg-white/5 border-white/10 hover:border-indigo-300/40 hover:bg-white/10';
+              'bg-white/10 border-white/15 hover:border-indigo-300/50 hover:bg-white/15';
             if (respondida) {
               if (esLaCorrecta) {
                 clase =
@@ -163,7 +163,7 @@ export default function Flashcards({
                 onClick={() => elegir(op.letra)}
                 disabled={respondida}
                 aria-pressed={seleccionada}
-                className={`answer-option w-full text-left flex gap-4 p-4 rounded-2xl border transition-all duration-300 active:scale-105 tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
+                className={`answer-option min-h-12 w-full text-left flex gap-4 p-5 rounded-2xl border transition-all duration-300 active:scale-105 tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
               >
                 <span
                   className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
@@ -173,7 +173,7 @@ export default function Flashcards({
                       ? 'bg-rose-500 text-white'
                       : seleccionada
                       ? 'bg-[#007AFF] text-white'
-                      : 'bg-white/10 text-slate-300'
+                      : 'bg-white/15 text-slate-100'
                   }`}
                 >
                   {respondida && esLaCorrecta ? (
@@ -188,7 +188,7 @@ export default function Flashcards({
                     op.letra
                   )}
                 </span>
-                <span className="text-slate-200 pt-1">{op.texto}</span>
+                <span className="text-base text-white pt-1">{op.texto}</span>
               </button>
             );
           })}
@@ -227,14 +227,14 @@ export default function Flashcards({
         <button
           onClick={anterior}
           disabled={indice === 0}
-          className="interactive-glow px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-slate-300 text-sm font-medium disabled:opacity-40 hover:bg-white/10 tap-scale"
+          className="interactive-glow min-h-12 px-5 py-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-slate-200 text-sm font-medium disabled:opacity-40 hover:bg-white/10 tap-scale"
         >
           ← Anterior
         </button>
 
         <button
           onClick={reiniciar}
-          className="text-xs font-medium text-slate-400 hover:text-[#007AFF] transition-colors"
+          className="min-h-12 px-3 text-sm font-medium text-slate-300 hover:text-[#007AFF] transition-colors"
         >
           Reiniciar
         </button>
@@ -242,14 +242,14 @@ export default function Flashcards({
         {indice === total - 1 ? (
           <button
             onClick={onComplete ?? reiniciar}
-            className="interactive-glow px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold tap-scale shadow-md shadow-indigo-500/20"
+            className="interactive-glow min-h-12 px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold tap-scale shadow-md shadow-indigo-500/20"
           >
             {onCompleteLabel ?? (onComplete ? 'Continuar' : 'Volver al inicio')}
           </button>
         ) : (
           <button
             onClick={siguiente}
-            className="interactive-glow px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold tap-scale shadow-md shadow-indigo-500/20"
+            className="interactive-glow min-h-12 px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-sm font-semibold tap-scale shadow-md shadow-indigo-500/20"
           >
             Siguiente →
           </button>
@@ -265,13 +265,17 @@ export default function Flashcards({
               setIndice(i);
               setOpcionSel(null);
             }}
-            className={`w-2 h-2 rounded-full transition-all ${
-              i === indice
-                ? 'bg-[#007AFF] w-6'
-                : 'bg-white/20 hover:bg-white/40'
-            }`}
+            className="group flex min-h-[48px] min-w-[48px] items-center justify-center"
             aria-label={`Ir a pregunta ${i + 1}`}
-          />
+          >
+            <span
+              className={`h-2 rounded-full transition-all ${
+                i === indice
+                  ? 'w-6 bg-[#007AFF]'
+                  : 'w-2 bg-white/30 group-hover:bg-white/50'
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>
