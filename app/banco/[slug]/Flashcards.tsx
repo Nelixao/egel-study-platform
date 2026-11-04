@@ -163,7 +163,7 @@ export default function Flashcards({
                 onClick={() => elegir(op.letra)}
                 disabled={respondida}
                 aria-pressed={seleccionada}
-                className={`answer-option min-h-12 w-full text-left flex gap-4 p-5 rounded-2xl border transition-all duration-300 active:scale-105 tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
+                className={`answer-option min-h-16 w-full text-left flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 active:scale-[0.99] tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
               >
                 <span
                   className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
@@ -188,7 +188,9 @@ export default function Flashcards({
                     op.letra
                   )}
                 </span>
-                <span className="text-base text-white pt-1">{op.texto}</span>
+                <span className="text-base md:text-lg leading-relaxed text-white">
+                  {op.texto}
+                </span>
               </button>
             );
           })}
@@ -196,25 +198,43 @@ export default function Flashcards({
 
         {/* Feedback */}
         {respondida && (
-          <div className="mt-6 pt-5 border-t border-white/10 animate-slide-up">
+          <div
+            role="status"
+            aria-live="polite"
+            className={`mt-6 rounded-2xl border p-5 animate-slide-up ${
+              esCorrecta
+                ? 'answer-feedback-correct border-emerald-300/50 bg-emerald-400/15 shadow-[0_0_28px_rgba(52,211,153,0.18)]'
+                : 'answer-feedback-incorrect border-rose-300/50 bg-rose-400/15 shadow-[0_0_28px_rgba(251,113,133,0.18)]'
+            }`}
+          >
             <div className="flex items-center gap-2 mb-3">
               <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
+                aria-hidden="true"
+                className={`grid h-9 w-9 place-items-center rounded-full ${
                   esCorrecta
-                    ? 'bg-emerald-500/15 text-emerald-400'
-                    : 'bg-rose-500/15 text-rose-400'
+                    ? 'bg-emerald-300 text-emerald-950'
+                    : 'bg-rose-300 text-rose-950'
                 }`}
               >
-                {esCorrecta ? 'Correcta' : 'Incorrecta'}
+                {esCorrecta ? '✓' : '×'}
+              </span>
+              <span
+                className={`text-lg font-bold px-2.5 py-1 rounded-md ${
+                  esCorrecta
+                    ? 'text-emerald-200'
+                    : 'text-rose-200'
+                }`}
+              >
+                {esCorrecta ? '¡Correcto!' : 'Incorrecto'}
               </span>
               {!esCorrecta && (
-                <span className="text-xs text-slate-400">
+                <span className="text-sm text-slate-200">
                   La respuesta correcta es <strong className="text-slate-200">{p.respuestaCorrecta}</strong>
                 </span>
               )}
             </div>
             {p.explicacion && (
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm leading-relaxed text-slate-100 md:text-base">
                 {p.explicacion}
               </p>
             )}

@@ -42,6 +42,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   const preguntasRef = useRef<Pregunta[]>([]);
   const respuestasRef = useRef<Record<number, string>>({});
   const finalizadoRef = useRef(false);
+  const inicioAutomaticoRef = useRef(false);
 
   const terminar = useCallback(() => {
     if (finalizadoRef.current) return;
@@ -85,6 +86,38 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     setFase('resultado');
   }, [estructura, modo]);
 
+  const iniciar = useCallback(
+    async (modoElegido: Modo, subareasElegidas: number[] = subareasSel) => {
+      setError(null);
+      if (subareasElegidas.length === 0) {
+        setError('Selecciona al menos una subárea');
+        return;
+      }
+
+      const resultado = await obtenerPreguntasAleatorias(
+        subareasElegidas,
+        cantidad
+      );
+
+      if ('error' in resultado) {
+        setError(resultado.error ?? null);
+        return;
+      }
+
+      setPreguntas(resultado.preguntas);
+      preguntasRef.current = resultado.preguntas;
+      respuestasRef.current = {};
+      setRespuestas({});
+      setIndice(0);
+      setSegundos(minutos * 60);
+      setModo(modoElegido);
+      finalizadoRef.current = false;
+      setMostrarCelebracion(false);
+      setFase(modoElegido);
+    },
+    [cantidad, minutos, subareasSel]
+  );
+
   useEffect(() => {
     let activo = true;
 
@@ -93,15 +126,43 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       if (!activo) return;
 
       const subareaParam = searchParams.get('subareas');
+      const idsDisponibles = new Set(
+        estructura.flatMap((seccion) =>
+          seccion.areas.flatMap((area) =>
+            area.subareas.map((subarea) => subarea.id)
+          )
+        )
+      );
+      let subareasSolicitadas: number[] = [];
       if (subareaParam) {
-        const ids = subareaParam
-          .split(',')
-          .map((s) => Number(s.trim()))
-          .filter((n) => !isNaN(n));
-        if (ids.length > 0) {
-          setSubareasSel(ids);
+        subareasSolicitadas = [
+          ...new Set(
+            subareaParam
+              .split(',')
+              .map((valor) => Number(valor.trim()))
+              .filter(
+                (id) => Number.isSafeInteger(id) && idsDisponibles.has(id)
+              )
+          ),
+        ];
+        if (subareasSolicitadas.length > 0) {
+          setSubareasSel(subareasSolicitadas);
           setCantidad(10);
+        } else if (searchParams.get('iniciar') === 'practica') {
+          setError('No encontramos subáreas disponibles para iniciar la práctica.');
+          return;
         }
+      }
+
+      if (
+        searchParams.get('iniciar') === 'practica' &&
+        !inicioAutomaticoRef.current
+      ) {
+        inicioAutomaticoRef.current = true;
+        await iniciar(
+          'practica',
+          subareasSolicitadas.length ? subareasSolicitadas : undefined
+        );
       }
     }
 
@@ -109,7 +170,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     return () => {
       activo = false;
     };
-  }, [searchParams]);
+  }, [iniciar, searchParams, estructura]);
 
   useEffect(() => {
     if (fase !== 'examen') return;
@@ -144,32 +205,6 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
 
   function limpiarSeleccion() {
     setSubareasSel([]);
-  }
-
-  async function iniciar(modoElegido: Modo) {
-    setError(null);
-    if (subareasSel.length === 0) {
-      setError('Selecciona al menos una subárea');
-      return;
-    }
-
-    const resultado = await obtenerPreguntasAleatorias(subareasSel, cantidad);
-
-    if ('error' in resultado) {
-      setError(resultado.error ?? null);
-      return;
-    }
-
-    setPreguntas(resultado.preguntas);
-    preguntasRef.current = resultado.preguntas;
-    respuestasRef.current = {};
-    setRespuestas({});
-    setIndice(0);
-    setSegundos(minutos * 60);
-    setModo(modoElegido);
-    finalizadoRef.current = false;
-    setMostrarCelebracion(false);
-    setFase(modoElegido);
   }
 
   function responder(opcion: string) {
@@ -289,10 +324,10 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                                 className="peer sr-only"
                               />
                               <span
-                                className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan-300 ${
+                                className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan-300 ${
                                   activa
                                     ? 'border-cyan-400 bg-cyan-500 text-white shadow-[0_0_14px_rgba(34,211,238,0.35)]'
-                                    : 'border-slate-500 bg-slate-800/80'
+                                    : 'border-slate-300 bg-slate-700/90'
                                 }`}
                               >
                                 {activa && (
@@ -519,7 +554,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   key={op.letra}
                   onClick={() => responder(op.letra)}
                   disabled={modo === 'practica' && respuestas[p.id] !== undefined}
-                  className={`min-h-12 w-full text-left flex gap-4 p-5 rounded-2xl border transition-all tap-scale ${
+                  className={`min-h-16 w-full text-left flex items-center gap-4 p-5 rounded-2xl border transition-all tap-scale ${
                     opcionCorrectaEnPractica
                       ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.2)]'
                       : opcionIncorrectaEnPractica

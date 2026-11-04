@@ -45,7 +45,11 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-5">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link
+            href="/"
+            onClick={() => setMenuAbierto(false)}
+            className="flex items-center gap-2.5 group"
+          >
             <div className="navbar-logo-mark w-9 h-9 rounded-[13px] bg-gradient-to-br from-[#1688FF] to-[#7068E8] flex items-center justify-center shadow-sm shadow-[#007AFF]/20 transition-all duration-300 group-hover:scale-105 group-hover:from-[#5856D6] group-hover:to-[#007AFF]">
               <span className="text-white font-bold text-sm">E</span>
             </div>
@@ -105,9 +109,12 @@ export default function Navbar() {
             )}
 
             <button
+              type="button"
               onClick={() => setMenuAbierto(!menuAbierto)}
               className="lg:hidden min-h-[48px] min-w-[48px] flex items-center justify-center rounded-full text-slate-200 hover:bg-slate-700/70 tap-scale"
               aria-label="Menú"
+              aria-expanded={menuAbierto}
+              aria-controls="menu-movil"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {menuAbierto ? (
@@ -121,7 +128,7 @@ export default function Navbar() {
         </div>
 
         {menuAbierto && (
-          <div className="lg:hidden py-3 border-t border-slate-700/70 space-y-1 animate-slide-up">
+          <div id="menu-movil" className="lg:hidden py-3 border-t border-slate-700/70 space-y-1 animate-slide-up">
             {links.map((link) => {
               const activo =
                 pathname === link.href ||

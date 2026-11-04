@@ -43,6 +43,7 @@ function etiquetaDia(clave: string) {
 }
 
 type Subarea = {
+  id: number;
   slug: string;
   nombre: string;
   area: string;
@@ -65,11 +66,17 @@ export default function FocusDashboard({
   const [precisionPorSlug, setPrecisionPorSlug] = useState<Record<string, number>>(
     {}
   );
+  const [ultimaSubareaSlug, setUltimaSubareaSlug] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     function actualizarProgreso() {
       const intentos = obtenerIntentos();
       const estadisticas = calcularEstadisticas(intentos);
+      const ultimoIntento = [...intentos].sort(
+        (a, b) => Date.parse(b.fecha) - Date.parse(a.fecha)
+      )[0];
       const hoy = claveDia(new Date());
       const diasRecientes = Array.from({ length: 7 }, (_, indice) =>
         desplazarDia(hoy, indice - 6)
@@ -86,6 +93,7 @@ export default function FocusDashboard({
           ])
         )
       );
+      setUltimaSubareaSlug(ultimoIntento?.subareaSlug ?? null);
       setDiasActivos(
         intentos
           .filter((intento) =>
@@ -126,6 +134,23 @@ export default function FocusDashboard({
     ? subareas
     : subareas.filter((subarea) => subarea.tieneContenido);
   const porcentajeMeta = Math.min(100, (preguntasHoy / metaDiaria) * 100);
+  const subareaReciente = subareas.find(
+    (subarea) =>
+      subarea.slug === ultimaSubareaSlug &&
+      subarea.tieneContenido &&
+      subarea.preguntas > 0
+  );
+  const subareaParaContinuar =
+    subareaReciente ??
+    [...subareas]
+      .filter((subarea) => subarea.tieneContenido && subarea.preguntas > 0)
+      .sort((a, b) => b.preguntas - a.preguntas)[0];
+  const colorMeta =
+    porcentajeMeta >= 100
+      ? '#34d399'
+      : porcentajeMeta >= 75
+        ? '#a78bfa'
+        : '#22d3ee';
   const diasRecientes = Array.from({ length: 7 }, (_, indice) => {
     const fecha = desplazarDia(claveDia(new Date()), indice - 6);
     return {
@@ -153,7 +178,11 @@ export default function FocusDashboard({
               </p>
 
               <Link
-                href="/hoy"
+                href={
+                  subareaParaContinuar
+                    ? `/simulador?subareas=${subareaParaContinuar.id}&iniciar=practica`
+                    : '/simulador'
+                }
                 className="interactive-glow group relative mt-6 inline-flex min-h-16 w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-400 px-7 py-4 text-lg font-bold text-white shadow-[0_14px_38px_-12px_rgba(99,102,241,0.72)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_-12px_rgba(34,211,238,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 sm:w-auto"
               >
                 <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -249,7 +278,11 @@ export default function FocusDashboard({
                   aria-valuemin={0}
                   aria-valuemax={metaDiaria}
                   style={{
-                    background: `conic-gradient(#22d3ee ${porcentajeMeta}%, rgba(71,85,105,0.55) ${porcentajeMeta}% 100%)`,
+                    background: `conic-gradient(${colorMeta} ${porcentajeMeta}%, rgba(71,85,105,0.55) ${porcentajeMeta}% 100%)`,
+                    boxShadow:
+                      porcentajeMeta >= 75
+                        ? `0 0 22px ${colorMeta}55`
+                        : undefined,
                   }}
                 >
                   <span className="grid h-9 w-9 place-items-center rounded-full bg-slate-900 text-[10px] font-bold text-cyan-200">
@@ -397,9 +430,12 @@ export default function FocusDashboard({
                     }`}
                     className={`interactive-glow glass-card group min-h-28 rounded-2xl p-4 transition hover:-translate-y-0.5 hover:border-slate-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
                       subarea.tieneContenido
-                        ? 'border-emerald-400/25 shadow-[0_10px_28px_-20px_rgba(52,211,153,0.45)]'
+                        ? 'border-indigo-400/25 shadow-[0_10px_28px_-20px_rgba(99,102,241,0.45)] hover:border-violet-300/50 hover:bg-gradient-to-br hover:from-indigo-500/10 hover:to-violet-500/10 hover:shadow-[0_0_24px_rgba(139,92,246,0.18)] active:shadow-[0_0_22px_rgba(99,102,241,0.3)]'
                         : 'border-slate-700/70 opacity-55'
                     }`}
+                    onClick={(event) => {
+                      if (!subarea.tieneContenido) event.preventDefault();
+                    }}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold tabular-nums text-slate-500">

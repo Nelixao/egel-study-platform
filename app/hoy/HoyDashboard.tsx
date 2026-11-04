@@ -142,13 +142,13 @@ export default function HoyDashboard({
     <main className="bg-ios-canvas min-h-screen">
       <header className="glass-nav">
         <div className="max-w-4xl mx-auto px-5 py-8">
-          <p className="text-xs font-semibold text-[#8E8E93] uppercase tracking-widest mb-2">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
             Tu progreso
           </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight">
             Hoy
           </h1>
-          <p className="text-sm text-black/60 mt-2">
+          <p className="text-sm text-slate-300 mt-2">
             Un resumen de tus respuestas guardadas en este dispositivo.
           </p>
         </div>
@@ -166,19 +166,19 @@ export default function HoyDashboard({
         <section
           className={`glass-card-strong rounded-[22px] p-6 transition-colors ${
             estadisticas.preguntasHoy >= metaDiaria
-              ?               'border-emerald-400/30 bg-emerald-400/[0.08]'
+              ? 'border-emerald-400/40 bg-emerald-400/[0.1] shadow-[0_0_32px_rgba(52,211,153,0.12)]'
               : ''
           }`}
           aria-labelledby="meta-diaria-titulo"
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold text-[#8E8E93] uppercase tracking-widest mb-2">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
                 Tu objetivo de hoy
               </p>
               <h2
                 id="meta-diaria-titulo"
-                className="text-xl font-semibold text-black"
+                className="text-xl font-semibold text-slate-100"
               >
                 Responde {metaDiaria} preguntas hoy
               </h2>
@@ -192,7 +192,7 @@ export default function HoyDashboard({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-black/70">
+              <span className="text-sm font-semibold text-slate-200">
                 {estadisticas.preguntasHoy}/{metaDiaria}
               </span>
               <button
@@ -235,8 +235,10 @@ export default function HoyDashboard({
             <div
               className={`h-full rounded-full transition-[width] duration-300 ${
                 estadisticas.preguntasHoy >= metaDiaria
-                  ? 'bg-emerald-400'
-                  : 'bg-gradient-to-r from-blue-400 to-violet-400'
+                  ? 'bg-gradient-to-r from-emerald-400 to-cyan-300 shadow-[0_0_16px_rgba(52,211,153,0.65)]'
+                  : estadisticas.preguntasHoy / metaDiaria >= 0.75
+                    ? 'bg-gradient-to-r from-violet-400 via-cyan-300 to-emerald-300 shadow-[0_0_14px_rgba(34,211,238,0.42)]'
+                    : 'bg-gradient-to-r from-blue-400 to-violet-400'
               }`}
               style={{
                 width: `${Math.min(
@@ -253,24 +255,24 @@ export default function HoyDashboard({
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(0,122,255,0.14),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(88,86,214,0.10),transparent_55%)]"
           />
-          <p className="text-xs font-semibold text-[#007AFF] uppercase tracking-widest mb-3">
+          <p className="text-xs font-semibold text-cyan-300 uppercase tracking-widest mb-3">
             Recomendación de hoy
           </p>
           {recomendacionConIntentos ? (
             <>
-              <h2 className="max-w-2xl text-2xl md:text-3xl font-semibold text-black tracking-tight">
+              <h2 className="max-w-2xl text-2xl md:text-3xl font-semibold text-slate-100 tracking-tight">
                 Hoy toca practicar {recomendacionConIntentos.nombre}
               </h2>
-              <p className="text-sm md:text-base text-black/60 mt-3 max-w-xl leading-relaxed">
+              <p className="text-sm md:text-base text-slate-300 mt-3 max-w-xl leading-relaxed">
                 Tu precisión en esta subárea es de{' '}
-                <strong className="text-black">
+                <strong                 className="text-white">
                   {recomendacionConIntentos.resultado!.precision}%
                 </strong>
                 , la más baja entre las que ya has practicado. Reforzarla puede
                 ayudarte a avanzar.
               </p>
               <Link
-                href={`/simulador?subareas=${recomendacionConIntentos.id}`}
+                href={`/simulador?subareas=${recomendacionConIntentos.id}&iniciar=practica`}
                 className="interactive-glow inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(99,102,241,0.55)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(139,92,246,0.55)] active:scale-[0.97]"
               >
                 Practicar ahora
@@ -281,16 +283,16 @@ export default function HoyDashboard({
             </>
           ) : recomendacionInicial ? (
             <>
-              <h2 className="max-w-2xl text-2xl md:text-3xl font-semibold text-black tracking-tight">
+              <h2 className="max-w-2xl text-2xl md:text-3xl font-semibold text-slate-100 tracking-tight">
                 Empieza con {recomendacionInicial.nombre}
               </h2>
-              <p className="text-sm md:text-base text-black/60 mt-3 max-w-xl leading-relaxed">
+              <p className="text-sm md:text-base text-slate-300 mt-3 max-w-xl leading-relaxed">
                 Tiene {recomendacionInicial.preguntasDisponibles} reactivos
                 disponibles. Practica algunos y después podremos recomendarte
                 una subárea según tus resultados.
               </p>
               <Link
-                href={`/simulador?subareas=${recomendacionInicial.id}`}
+                href={`/simulador?subareas=${recomendacionInicial.id}&iniciar=practica`}
                 className="interactive-glow inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(99,102,241,0.55)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(139,92,246,0.55)] active:scale-[0.97]"
               >
                 Practicar ahora
@@ -300,7 +302,7 @@ export default function HoyDashboard({
               </Link>
             </>
           ) : (
-            <p className="text-sm text-black/55">
+            <p className="text-sm text-slate-300">
               Aún no hay subáreas con preguntas aprobadas para practicar.
             </p>
           )}
@@ -313,17 +315,17 @@ export default function HoyDashboard({
           className="flex items-center justify-between gap-4 glass-card-strong rounded-[24px] p-5 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:border-[#007AFF]/25 hover:shadow-[0_14px_36px_-16px_rgba(0,0,0,0.18)] group"
         >
           <span>
-            <span className="block text-base font-semibold text-black group-hover:text-[#007AFF] transition-colors">
+            <span className="block text-base font-semibold text-slate-100 group-hover:text-cyan-200 transition-colors">
               Repasar mis errores
             </span>
-            <span className="block text-sm text-black/55 mt-1">
+            <span className="block text-sm text-slate-300 mt-1">
               {erroresPendientes}{' '}
               {erroresPendientes === 1
                 ? 'pregunta pendiente'
                 : 'preguntas pendientes'}
             </span>
           </span>
-          <span className="flex items-center gap-2 text-[#007AFF] text-sm font-semibold whitespace-nowrap">
+          <span className="flex items-center gap-2 text-cyan-300 text-sm font-semibold whitespace-nowrap">
             Repasar
             <span aria-hidden="true">→</span>
           </span>
@@ -331,29 +333,29 @@ export default function HoyDashboard({
 
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="glass-card-strong rounded-[22px] p-6">
-            <p className="text-sm font-medium text-black/55">Racha de días</p>
+            <p className="text-sm font-medium text-slate-300">Racha de días</p>
             <p className="text-4xl font-bold text-[#5856D6] mt-2">
               {estadisticas.rachaDias}
             </p>
-            <p className="text-xs text-black/50 mt-1">
+            <p className="text-xs text-slate-400 mt-1">
               {estadisticas.rachaDias === 1 ? 'día consecutivo' : 'días consecutivos'}
             </p>
           </div>
           <div className="glass-card-strong rounded-[22px] p-6">
-            <p className="text-sm font-medium text-black/55">
+            <p className="text-sm font-medium text-slate-300">
               Preguntas respondidas hoy
             </p>
             <p className="text-4xl font-bold text-[#007AFF] mt-2">
               {estadisticas.preguntasHoy}
             </p>
-            <p className="text-xs text-black/50 mt-1">en banco y simuladores</p>
+            <p className="text-xs text-slate-400 mt-1">en banco y simuladores</p>
           </div>
         </section>
 
         <section className="glass-card-strong rounded-[22px] p-6">
           <div className="mb-5">
-            <h2 className="text-lg font-semibold text-black">Logros</h2>
-            <p className="text-sm text-black/55 mt-1">
+            <h2 className="text-lg font-semibold text-slate-100">Logros</h2>
+            <p className="text-sm text-slate-300 mt-1">
               Se desbloquean automáticamente con tu práctica.
             </p>
           </div>
@@ -411,14 +413,14 @@ export default function HoyDashboard({
                 <span className="min-w-0">
                   <span
                     className={`block text-sm font-semibold ${
-                      logro.logrado ? 'text-black' : 'text-black/45'
+                      logro.logrado ? 'text-slate-100' : 'text-slate-400'
                     }`}
                   >
                     {logro.nombre}
                   </span>
                   <span
                     className={`mt-0.5 block text-xs ${
-                      logro.logrado ? 'text-black/55' : 'text-black/35'
+                      logro.logrado ? 'text-slate-300' : 'text-slate-500'
                     }`}
                   >
                     {logro.descripcion}
@@ -431,10 +433,10 @@ export default function HoyDashboard({
 
         <section className="glass-card-strong rounded-[22px] p-6">
           <div className="mb-5">
-            <h2 className="text-lg font-semibold text-black">
+            <h2 className="text-lg font-semibold text-slate-100">
               Precisión por subárea
             </h2>
-            <p className="text-sm text-black/55 mt-1">
+            <p className="text-sm text-slate-300 mt-1">
               Porcentaje de respuestas correctas desde que empezaste a practicar.
             </p>
           </div>
@@ -448,10 +450,10 @@ export default function HoyDashboard({
                 return (
                   <li key={subarea.slug}>
                     <div className="flex items-center justify-between gap-4 mb-2">
-                      <span className="text-sm font-medium text-black/80">
+                      <span className="text-sm font-medium text-slate-200">
                         {subarea.nombre}
                       </span>
-                      <span className="text-xs text-black/55 whitespace-nowrap">
+                      <span className="text-xs text-slate-300 whitespace-nowrap">
                         {resultado
                           ? `${precision}% · ${resultado.total} respuestas`
                           : 'Sin respuestas'}

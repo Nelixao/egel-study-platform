@@ -44,6 +44,7 @@ export default async function Home() {
         const lecciones = leccionesPorId.get(subarea.id) ?? 0;
         const preguntas = preguntasPorId.get(subarea.id) ?? 0;
         return {
+          id: subarea.id,
           slug: subarea.slug,
           nombre: subarea.nombre,
           area: area.nombre,
