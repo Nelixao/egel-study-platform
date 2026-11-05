@@ -25,6 +25,16 @@ body {
   overflow-x: hidden;
 }
 
+body.focus-mode-active {
+  overflow: hidden;
+  background: #020617;
+}
+
+body.focus-mode-active > nav,
+body.focus-mode-active > footer {
+  display: none !important;
+}
+
 html {
   overflow-x: clip;
 }

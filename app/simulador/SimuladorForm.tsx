@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { obtenerPreguntasAleatorias } from '@/app/actions/simulador';
 import { guardarIntento } from '@/lib/progreso';
 import LogroModal from '@/components/LogroModal';
+import Pomodoro from '@/components/Pomodoro';
 
 type Subarea = { id: number; nombre: string; slug: string };
 type Area = { id: number; nombre: string; subareas: Subarea[] };
@@ -38,6 +39,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   const [segundos, setSegundos] = useState(0);
   const [mostrarCelebracion, setMostrarCelebracion] = useState(false);
   const [detalleCelebracion, setDetalleCelebracion] = useState('');
+  const [modoEnfoque, setModoEnfoque] = useState(false);
   const intervaloRef = useRef<NodeJS.Timeout | null>(null);
   const preguntasRef = useRef<Pregunta[]>([]);
   const respuestasRef = useRef<Record<number, string>>({});
@@ -83,6 +85,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       `${correctas} de ${preguntasRef.current.length} respuestas correctas.`
     );
     setMostrarCelebracion(true);
+    setModoEnfoque(false);
     setFase('resultado');
   }, [estructura, modo]);
 
@@ -190,6 +193,24 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     };
   }, [fase, terminar]);
 
+  useEffect(() => {
+    if (!modoEnfoque) {
+      document.body.classList.remove('focus-mode-active');
+      return;
+    }
+
+    document.body.classList.add('focus-mode-active');
+    function salirConEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setModoEnfoque(false);
+    }
+    window.addEventListener('keydown', salirConEscape);
+
+    return () => {
+      document.body.classList.remove('focus-mode-active');
+      window.removeEventListener('keydown', salirConEscape);
+    };
+  }, [modoEnfoque]);
+
   function toggleSubarea(id: number) {
     setSubareasSel((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -246,6 +267,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   function reiniciar() {
     finalizadoRef.current = false;
     setMostrarCelebracion(false);
+    setModoEnfoque(false);
     preguntasRef.current = [];
     respuestasRef.current = {};
     setFase('config');
@@ -502,9 +524,28 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
     const respondidas = Object.keys(respuestas).length;
 
     return (
-      <div className="space-y-5">
-        <div className="sticky top-20 z-50 border border-white/10 bg-slate-900/95 shadow-[0_12px_30px_rgba(15,23,42,0.45)] backdrop-blur-md rounded-[22px] p-4 flex items-center justify-between">
-          <div className="text-sm text-slate-400">
+      <div
+        className={
+          modoEnfoque
+            ? 'fixed inset-0 z-[100] overflow-y-auto bg-slate-950 text-slate-100 transition-all duration-300'
+            : 'space-y-5 transition-all duration-300'
+        }
+      >
+        <div
+          className={
+            modoEnfoque
+              ? 'mx-auto min-h-screen w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-6'
+              : 'space-y-5'
+          }
+        >
+        <div
+          className={`${
+            modoEnfoque
+              ? 'mb-8 flex flex-col gap-4 rounded-[22px] border border-white/10 bg-slate-950/90 p-3 shadow-xl sm:flex-row sm:items-center sm:justify-between'
+              : 'sticky top-20 z-50 flex items-center justify-between rounded-[22px] border border-white/10 bg-slate-900/95 p-4 shadow-[0_12px_30px_rgba(15,23,42,0.45)] backdrop-blur-md'
+          }`}
+        >
+          <div className="text-sm text-slate-300">
             {modo === 'practica' && (
               <span className="mr-3 font-semibold text-emerald-300">
                 Modo práctica · sin tiempo
@@ -516,20 +557,52 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
             <span className="mx-3 text-slate-600">·</span>
             {respondidas} respondidas
           </div>
-          {modo === 'examen' && (
-            <div
-              className={`font-mono font-bold px-3 py-1.5 rounded-lg ${
-                segundos < 60
-                  ? 'bg-rose-500/10 text-rose-400'
-                  : 'bg-indigo-400/10 text-indigo-300'
-              }`}
-            >
-              {String(minutosRestantes).padStart(2, '0')}:
-              {String(segundosRestantes).padStart(2, '0')}
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {modo === 'examen' && (
+              <div
+                className={`rounded-lg px-3 py-1.5 font-mono font-bold ${
+                  segundos < 60
+                    ? 'bg-rose-500/10 text-rose-400'
+                    : 'bg-indigo-400/10 text-indigo-300'
+                }`}
+                aria-label={`Tiempo del examen: ${minutosRestantes} minutos y ${segundosRestantes} segundos`}
+              >
+                {String(minutosRestantes).padStart(2, '0')}:
+                {String(segundosRestantes).padStart(2, '0')}
+              </div>
+            )}
+            <div className={modoEnfoque ? 'contents' : 'hidden'}>
+              <Pomodoro compacto />
             </div>
-          )}
+            {modoEnfoque ? (
+              <button
+                type="button"
+                onClick={() => setModoEnfoque(false)}
+                className="min-h-12 rounded-xl border border-white/15 bg-white/5 px-4 text-sm font-semibold text-slate-100 transition-colors hover:bg-white/10"
+                aria-label="Salir del modo enfoque"
+              >
+                Salir
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setModoEnfoque(true)}
+                className="min-h-11 rounded-xl border border-indigo-300/20 bg-indigo-400/10 px-4 text-sm font-semibold text-indigo-100 transition-all duration-300 hover:border-indigo-300/40 hover:bg-indigo-400/20"
+              >
+                <span aria-hidden="true">⛶ </span>
+                Modo Enfoque
+              </button>
+            )}
+          </div>
         </div>
 
+        <div
+          className={`${
+            modoEnfoque
+              ? 'mx-auto flex min-h-[calc(100vh-12rem)] w-full max-w-4xl flex-col justify-center'
+              : ''
+          }`}
+        >
         <div className="mt-6 glass-card-strong rounded-[22px] p-6 md:p-8">
           <p className="text-white font-medium text-lg leading-relaxed mb-6">
             {p.enunciado}
@@ -638,6 +711,8 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                 : 'Finalizar'
               : 'Siguiente →'}
           </button>
+        </div>
+        </div>
         </div>
       </div>
     );

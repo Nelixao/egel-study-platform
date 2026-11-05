@@ -18,7 +18,7 @@ function formatoTiempo(milisegundos: number): string {
   return `${String(minutos).padStart(2, '0')}:${String(segundosRestantes).padStart(2, '0')}`;
 }
 
-export default function Pomodoro() {
+export default function Pomodoro({ compacto = false }: { compacto?: boolean }) {
   const [fase, setFase] = useState<FasePomodoro>('estudio');
   const [restante, setRestante] = useState(DURACION_ESTUDIO);
   const [activo, setActivo] = useState(false);
@@ -114,6 +114,81 @@ export default function Pomodoro() {
   }
 
   const progreso = (restante / duracionDe(fase)) * 100;
+
+  if (compacto) {
+    return (
+      <section
+        className={`w-full rounded-2xl border p-3 transition-colors duration-300 sm:w-64 ${
+          aviso
+            ? 'border-emerald-400/40 bg-emerald-500/10'
+            : 'border-white/10 bg-slate-900/90'
+        }`}
+        aria-label="Temporizador Pomodoro"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold text-slate-300">
+              {fase === 'estudio' ? 'Estudio · 25 min' : 'Descanso · 5 min'}
+            </p>
+            <p
+              className="font-mono text-2xl font-bold leading-tight text-white"
+              role="timer"
+              aria-label={`${formatoTiempo(restante)} restantes`}
+            >
+              {formatoTiempo(restante)}
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              onClick={iniciarOPausar}
+              className="min-h-11 rounded-xl bg-indigo-500 px-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-400"
+              aria-label={activo ? 'Pausar Pomodoro' : 'Iniciar Pomodoro'}
+            >
+              {activo ? 'Pausar' : 'Iniciar'}
+            </button>
+            <button
+              type="button"
+              onClick={reiniciar}
+              className="min-h-11 min-w-11 rounded-xl border border-white/10 bg-white/5 text-slate-200 transition-colors hover:bg-white/10"
+              aria-label="Reiniciar Pomodoro"
+              title="Reiniciar Pomodoro"
+            >
+              ↻
+            </button>
+          </div>
+        </div>
+        <div
+          className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10"
+          role="progressbar"
+          aria-label="Tiempo restante del ciclo Pomodoro"
+          aria-valuenow={Math.round(progreso)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <div
+            className={`h-full rounded-full transition-[width,color] duration-300 ${
+              aviso
+                ? 'bg-emerald-300'
+                : fase === 'estudio'
+                  ? 'bg-indigo-400'
+                  : 'bg-emerald-400'
+            }`}
+            style={{ width: `${progreso}%` }}
+          />
+        </div>
+        {aviso && (
+          <p
+            className="mt-2 text-xs font-medium text-emerald-200"
+            role="status"
+            aria-live="polite"
+          >
+            {aviso}
+          </p>
+        )}
+      </section>
+    );
+  }
 
   return (
     <section className="glass-card-strong rounded-[22px] p-6">
