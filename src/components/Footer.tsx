@@ -61,10 +61,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/temas"
+                  href="/temario"
                   className="text-sm text-black/65 hover:text-black transition-colors"
                 >
-                  Temas
+                  Temario
                 </Link>
               </li>
               <li>

@@ -133,7 +133,8 @@ export default function FocusDashboard({
   const subareasVisibles = mostrarTodas
     ? subareas
     : subareas.filter((subarea) => subarea.tieneContenido);
-  const porcentajeMeta = Math.min(100, (preguntasHoy / metaDiaria) * 100);
+  const porcentajeMeta =
+    metaDiaria > 0 ? Math.min(100, (preguntasHoy / metaDiaria) * 100) : 0;
   const subareaReciente = subareas.find(
     (subarea) =>
       subarea.slug === ultimaSubareaSlug &&
@@ -162,17 +163,24 @@ export default function FocusDashboard({
 
   return (
     <main className="bg-ios-canvas-v2 min-h-screen">
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 md:py-14">
-        <section className="glass-elevated rounded-[28px] p-6 md:p-9">
-          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div className="max-w-2xl">
-              <p className="text-sm font-medium text-slate-400">
+      <div className="mx-auto max-w-6xl px-5 py-10 sm:px-7 md:py-16 lg:px-8">
+        <section
+          aria-label="Tu espacio de estudio"
+          className="grid gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.8fr)]"
+        >
+          <div className="glass-elevated dashboard-card dashboard-enter relative min-h-[300px] overflow-hidden rounded-[32px] p-7 sm:p-9 lg:p-12">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-violet-500/15 blur-3xl"
+            />
+            <div className="relative flex h-full flex-col items-start justify-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200/80">
                 EGEL Plus ICOMPU
               </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+              <h1 className="mt-4 max-w-2xl text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl">
                 Cada sesión te acerca a tu meta.
               </h1>
-              <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-300 md:text-base">
+              <p className="mt-5 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
                 Avanza a tu ritmo, celebra cada respuesta y construye un hábito
                 que te acerque al EGEL.
               </p>
@@ -183,13 +191,13 @@ export default function FocusDashboard({
                     ? `/simulador?subareas=${subareaParaContinuar.id}&iniciar=practica`
                     : '/simulador'
                 }
-                className="interactive-glow group relative mt-6 inline-flex min-h-16 w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-400 px-7 py-4 text-lg font-bold text-white shadow-[0_14px_38px_-12px_rgba(99,102,241,0.72)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_48px_-12px_rgba(34,211,238,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 sm:w-auto"
+                className="dashboard-action group relative mt-8 inline-flex min-h-14 w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-400 px-7 py-4 text-base font-bold text-white shadow-[0_14px_38px_-12px_rgba(99,102,241,0.72)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 sm:w-auto sm:text-lg"
               >
-                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                 <span className="relative">Continuar estudiando</span>
                 <svg
                   aria-hidden="true"
-                  className="relative h-5 w-5 transition-transform group-hover:translate-x-1"
+                  className="relative h-5 w-5 transition-transform duration-200 group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -203,15 +211,17 @@ export default function FocusDashboard({
                 </svg>
               </Link>
             </div>
+          </div>
 
-            <aside
-              aria-label="Tu racha y objetivo diario"
-              className="grid gap-4 rounded-3xl border border-white/10 bg-slate-950/25 p-5 sm:grid-cols-[1fr_auto] lg:min-w-[340px] lg:grid-cols-1"
-            >
+          <aside
+            aria-label="Tu actividad de estudio"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1"
+          >
+            <div className="glass-card-strong dashboard-card dashboard-enter dashboard-enter-delay-1 rounded-[28px] p-6 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center gap-4">
                 <span
                   aria-hidden="true"
-                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-400/15 text-orange-300 shadow-[0_0_28px_rgba(251,146,60,0.16)]"
+                  className="dashboard-streak-icon flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-400/15 text-orange-300 shadow-[0_0_28px_rgba(251,146,60,0.16)]"
                 >
                   <svg
                     className="h-8 w-8"
@@ -237,7 +247,7 @@ export default function FocusDashboard({
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
                     {rachaDias > 0 ? 'Racha actual' : 'Empieza hoy'}
                   </p>
-                  <p className="mt-0.5 text-3xl font-bold tabular-nums text-white">
+                  <p className="mt-1 text-3xl font-bold tabular-nums text-white">
                     {rachaDias}
                     <span className="ml-2 text-sm font-medium text-slate-400">
                       {rachaDias === 1 ? 'día' : 'días'}
@@ -247,10 +257,10 @@ export default function FocusDashboard({
               </div>
 
               <div
-                className="flex items-center justify-between gap-3 sm:flex-col sm:items-center"
+                className="mt-6 flex items-center justify-between gap-3 border-t border-white/[0.08] pt-4"
                 aria-label="Actividad de los últimos siete días"
               >
-                <p className="text-xs text-slate-400 sm:text-center">Últimos 7 días</p>
+                <p className="text-xs text-slate-400">Últimos 7 días</p>
                 <div className="flex gap-1.5">
                   {diasRecientes.map((dia) => (
                     <span
@@ -268,48 +278,72 @@ export default function FocusDashboard({
                   ))}
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center gap-3 border-t border-white/10 pt-4 sm:col-span-2">
-                <div
-                  className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full"
-                  role="progressbar"
-                  aria-label="Progreso de tu objetivo diario"
-                  aria-valuenow={Math.min(preguntasHoy, metaDiaria)}
-                  aria-valuemin={0}
-                  aria-valuemax={metaDiaria}
-                  style={{
-                    background: `conic-gradient(${colorMeta} ${porcentajeMeta}%, rgba(71,85,105,0.55) ${porcentajeMeta}% 100%)`,
-                    boxShadow:
-                      porcentajeMeta >= 75
-                        ? `0 0 22px ${colorMeta}55`
-                        : undefined,
-                  }}
+            <div className="glass-card-strong dashboard-card dashboard-enter dashboard-enter-delay-2 flex items-center gap-5 rounded-[28px] p-6">
+              <div
+                className="relative grid h-24 w-24 shrink-0 place-items-center"
+                role="progressbar"
+                aria-label="Progreso de tu objetivo diario"
+                aria-valuenow={Math.min(preguntasHoy, metaDiaria)}
+                aria-valuemin={0}
+                aria-valuemax={Math.max(1, metaDiaria)}
+              >
+                <svg
+                  className="absolute inset-0 h-full w-full -rotate-90"
+                  viewBox="0 0 48 48"
+                  aria-hidden="true"
                 >
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-slate-800 text-[10px] font-bold text-cyan-200">
-                    {Math.round(porcentajeMeta)}%
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-100">
-                    Objetivo diario
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    {preguntasHoy} de {metaDiaria} preguntas
-                  </p>
-                </div>
+                  <circle
+                    cx="24"
+                    cy="24"
+                    r="22"
+                    fill="none"
+                    stroke="rgba(71,85,105,0.65)"
+                    strokeWidth="3"
+                  />
+                  <circle
+                    cx="24"
+                    cy="24"
+                    r="22"
+                    fill="none"
+                    stroke={colorMeta}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeDasharray="138.23"
+                    strokeDashoffset={138.23 * (1 - porcentajeMeta / 100)}
+                    className="transition-[stroke-dashoffset] duration-200 ease-out"
+                  />
+                </svg>
+                <span className="text-sm font-bold tabular-nums text-slate-100">
+                  {Math.round(porcentajeMeta)}%
+                </span>
               </div>
-            </aside>
-          </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  Meta diaria
+                </p>
+                <p className="mt-2 text-xl font-semibold tracking-tight text-white">
+                  {preguntasHoy}
+                  <span className="text-sm font-medium text-slate-400">
+                    {' '}
+                    / {metaDiaria}
+                  </span>
+                </p>
+                <p className="mt-1 text-xs text-slate-400">preguntas respondidas</p>
+              </div>
+            </div>
+          </aside>
         </section>
 
         <section
           aria-labelledby="avance-titulo"
-          className="mt-6 grid gap-4 md:grid-cols-[1.15fr_0.85fr]"
+          className="mt-12 grid gap-5 md:grid-cols-[1.15fr_0.85fr]"
         >
-          <div className="glass-card-strong rounded-[24px] p-6">
+          <div className="glass-card dashboard-card rounded-[26px] p-6 sm:p-7">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                   Tu avance de práctica
                 </p>
                 <h2
@@ -319,7 +353,7 @@ export default function FocusDashboard({
                   {subareasPracticadas} de {totalSubareas} subáreas
                 </h2>
               </div>
-              <span className="text-2xl font-semibold tabular-nums text-blue-300">
+              <span className="text-xl font-semibold tabular-nums text-blue-300">
                 {porcentaje}%
               </span>
             </div>
@@ -332,17 +366,17 @@ export default function FocusDashboard({
               aria-valuemax={Math.max(1, totalSubareas)}
             >
               <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-400 transition-[width] duration-500"
+                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-400 transition-[width] duration-200 ease-out"
                 style={{ width: `${porcentaje}%` }}
               />
             </div>
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs leading-relaxed text-slate-500">
               Subáreas en las que ya has respondido preguntas en este
               dispositivo.
             </p>
           </div>
 
-          <div className="glass-card-strong flex items-center gap-4 rounded-[24px] p-6">
+          <div className="glass-card dashboard-card flex items-center gap-4 rounded-[26px] p-6 sm:p-7">
             <span
               aria-hidden="true"
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-400/10 text-emerald-300"
@@ -376,28 +410,28 @@ export default function FocusDashboard({
           </div>
         </section>
 
-        <section className="mt-10" aria-labelledby="mapa-titulo">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <section className="mt-20" aria-labelledby="mapa-titulo">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                 Mapa de estudio
               </p>
               <h2
                 id="mapa-titulo"
-                className="mt-1 text-xl font-semibold tracking-tight text-slate-100"
+                className="mt-1 text-xl font-semibold tracking-tight text-slate-200"
               >
                 Tus subáreas
               </h2>
             </div>
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
               <span className="inline-flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
                 Con contenido
               </span>
               <button
                 type="button"
                 onClick={() => setMostrarTodas((mostrar) => !mostrar)}
-                className="rounded-lg px-2 py-1 font-semibold text-cyan-300 transition hover:bg-cyan-300/10 hover:text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
+                className="rounded-lg px-2 py-1 font-semibold text-cyan-300 transition-colors duration-150 hover:bg-cyan-300/10 hover:text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
                 aria-expanded={mostrarTodas}
               >
                 {mostrarTodas ? 'Ver solo disponibles' : 'Ver todas'}
@@ -407,91 +441,92 @@ export default function FocusDashboard({
 
           {subareas.length > 0 ? (
             subareasVisibles.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {subareasVisibles.map((subarea) => {
                   const precision = precisionPorSlug[subarea.slug];
                   const perimetro = 100.53;
                   const desplazamiento =
                     perimetro * (1 - (precision ?? 0) / 100);
+                  const indice = subareas.findIndex(
+                    (elemento) => elemento.slug === subarea.slug
+                  );
 
                   return (
-                  <Link
-                    key={subarea.slug}
-                    href={`/subarea/${subarea.slug}`}
-                    aria-disabled={!subarea.tieneContenido}
-                    aria-label={`${subarea.nombre}, ${
-                      subarea.tieneContenido
-                        ? `${subarea.lecciones} lecciones y ${subarea.preguntas} preguntas`
-                        : 'sin contenido todavía'
-                    }${
-                      precision === undefined
-                        ? ''
-                        : `, ${precision}% de respuestas correctas`
-                    }`}
-                    className={`interactive-glow glass-card group min-h-28 rounded-2xl p-4 transition hover:-translate-y-0.5 hover:border-slate-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
-                      subarea.tieneContenido
-                        ? 'border-indigo-400/25 shadow-[0_10px_28px_-20px_rgba(99,102,241,0.45)] hover:border-violet-300/50 hover:bg-gradient-to-br hover:from-indigo-500/10 hover:to-violet-500/10 hover:shadow-[0_0_24px_rgba(139,92,246,0.18)] active:shadow-[0_0_22px_rgba(99,102,241,0.3)]'
-                        : 'border-slate-700/70 opacity-55'
-                    }`}
-                    onClick={(event) => {
-                      if (!subarea.tieneContenido) event.preventDefault();
-                    }}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold tabular-nums text-slate-500">
-                        {String(
-                          subareas.findIndex(
-                            (elemento) => elemento.slug === subarea.slug
-                          ) + 1
-                        ).padStart(2, '0')}
-                      </span>
-                      <span
-                        className="relative grid h-11 w-11 shrink-0 place-items-center"
-                        role="img"
-                        aria-label={
-                          precision === undefined
-                            ? `${subarea.nombre}: aún no practicada`
-                            : `${subarea.nombre}: ${precision}% de respuestas correctas`
-                        }
-                      >
-                        <svg
-                          className="absolute inset-0 h-full w-full -rotate-90"
-                          viewBox="0 0 40 40"
-                          aria-hidden="true"
-                        >
-                          <circle
-                            cx="20"
-                            cy="20"
-                            r="16"
-                            fill="none"
-                            stroke="rgba(148,163,184,0.22)"
-                            strokeWidth="3"
-                          />
-                          <circle
-                            cx="20"
-                            cy="20"
-                            r="16"
-                            fill="none"
-                            stroke={precision === undefined ? 'transparent' : '#34d399'}
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeDasharray={perimetro}
-                            strokeDashoffset={desplazamiento}
-                            className="transition-[stroke-dashoffset] duration-700"
-                          />
-                        </svg>
-                        <span className="text-[9px] font-bold tabular-nums text-slate-300">
-                          {precision === undefined ? '—' : `${precision}%`}
+                    <Link
+                      key={subarea.slug}
+                      href={`/subarea/${subarea.slug}`}
+                      aria-disabled={!subarea.tieneContenido}
+                      aria-label={`${subarea.nombre}, ${
+                        subarea.tieneContenido
+                          ? `${subarea.lecciones} lecciones y ${subarea.preguntas} preguntas`
+                          : 'sin contenido todavía'
+                      }${
+                        precision === undefined
+                          ? ''
+                          : `, ${precision}% de respuestas correctas`
+                      }`}
+                      className={`dashboard-map-card group min-h-28 rounded-2xl p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
+                        subarea.tieneContenido
+                          ? 'border-white/[0.08] text-slate-200 hover:border-violet-300/25 hover:bg-violet-400/[0.04]'
+                          : 'border-slate-700/40 opacity-50'
+                      }`}
+                      onClick={(event) => {
+                        if (!subarea.tieneContenido) event.preventDefault();
+                      }}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-semibold tabular-nums text-slate-500">
+                          {String(indice + 1).padStart(2, '0')}
                         </span>
-                      </span>
-                    </div>
-                    <p className="mt-3 line-clamp-2 text-sm font-medium leading-snug text-slate-200 group-hover:text-white">
-                      {subarea.nombre}
-                    </p>
-                    <p className="mt-1 truncate text-[11px] text-slate-500">
-                      {subarea.area}
-                    </p>
-                  </Link>
+                        <span
+                          className="relative grid h-10 w-10 shrink-0 place-items-center"
+                          role="img"
+                          aria-label={
+                            precision === undefined
+                              ? `${subarea.nombre}: aún no practicada`
+                              : `${subarea.nombre}: ${precision}% de respuestas correctas`
+                          }
+                        >
+                          <svg
+                            className="absolute inset-0 h-full w-full -rotate-90"
+                            viewBox="0 0 40 40"
+                            aria-hidden="true"
+                          >
+                            <circle
+                              cx="20"
+                              cy="20"
+                              r="16"
+                              fill="none"
+                              stroke="rgba(148,163,184,0.18)"
+                              strokeWidth="3"
+                            />
+                            <circle
+                              cx="20"
+                              cy="20"
+                              r="16"
+                              fill="none"
+                              stroke={
+                                precision === undefined ? 'transparent' : '#34d399'
+                              }
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeDasharray={perimetro}
+                              strokeDashoffset={desplazamiento}
+                              className="transition-[stroke-dashoffset] duration-200 ease-out"
+                            />
+                          </svg>
+                          <span className="text-[9px] font-bold tabular-nums text-slate-300">
+                            {precision === undefined ? '—' : `${precision}%`}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="mt-3 line-clamp-2 text-sm font-medium leading-snug text-slate-300 transition-colors duration-150 group-hover:text-white">
+                        {subarea.nombre}
+                      </p>
+                      <p className="mt-1 truncate text-[11px] text-slate-500">
+                        {subarea.area}
+                      </p>
+                    </Link>
                   );
                 })}
               </div>

@@ -223,7 +223,7 @@ export default function BuscadorLecciones() {
                     <Link
                       href={`/subarea/${encodeURIComponent(
                         resultado.subareaSlug
-                      )}#leccion-${resultado.id}`}
+                      )}/${resultado.id}`}
                       className="glass-card-strong group block rounded-2xl p-5 transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-cyan-300/30 hover:shadow-[0_16px_40px_-24px_rgba(34,211,238,0.35)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 sm:p-6"
                     >
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

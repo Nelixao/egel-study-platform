@@ -6,6 +6,7 @@ import { subareas, areas, lecciones } from '@/db/schema';
 import { asc, eq, desc } from 'drizzle-orm';
 import { crearLeccion, eliminarLeccion } from '@/app/actions/lecciones';
 import MarkdownEditor from './MarkdownEditor';
+import LeccionesAdminSearch from './LeccionesAdminSearch';
 
 export const metadata = {
   title: 'Lecciones — Admin',
@@ -23,7 +24,7 @@ export default async function AdminLeccionesPage() {
     .leftJoin(areas, eq(subareas.areaId, areas.id))
     .orderBy(asc(areas.orden), asc(subareas.id));
 
-  const ultimas = await db
+  const todasLasLecciones = await db
     .select({
       id: lecciones.id,
       titulo: lecciones.titulo,
@@ -34,8 +35,7 @@ export default async function AdminLeccionesPage() {
     .from(lecciones)
     .leftJoin(subareas, eq(lecciones.subareaId, subareas.id))
     .leftJoin(areas, eq(subareas.areaId, areas.id))
-    .orderBy(desc(lecciones.id))
-    .limit(15);
+    .orderBy(desc(lecciones.id));
 
   // Agrupar subáreas por área para el select
   const subareasPorArea = todasSubareas.reduce<
@@ -57,7 +57,8 @@ export default async function AdminLeccionesPage() {
                 Lecciones
               </h1>
               <p className="text-sm text-[#8E8E93] mt-0.5">
-                {ultimas.length} {ultimas.length === 1 ? 'lección reciente' : 'lecciones recientes'}
+                {todasLasLecciones.length}{' '}
+                {todasLasLecciones.length === 1 ? 'lección' : 'lecciones'}
               </p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-[#5856D6]/10 flex items-center justify-center flex-shrink-0">
@@ -206,15 +207,16 @@ export default async function AdminLeccionesPage() {
                 </svg>
               </div>
               <h2 className="text-sm font-semibold text-black/70 uppercase tracking-wide">
-                Lecciones recientes
+                Todas las lecciones
               </h2>
             </div>
             <span className="text-xs text-[#8E8E93] font-medium">
-              {ultimas.length}
+              {todasLasLecciones.length}
             </span>
           </div>
 
-          {ultimas.length === 0 ? (
+          <LeccionesAdminSearch total={todasLasLecciones.length}>
+          {todasLasLecciones.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <p className="text-sm text-[#8E8E93]">
                 Aún no hay lecciones creadas.
@@ -222,9 +224,10 @@ export default async function AdminLeccionesPage() {
             </div>
           ) : (
             <ul className="divide-y divide-black/[0.05]">
-              {ultimas.map((l) => (
+              {todasLasLecciones.map((l) => (
                 <li
                   key={l.id}
+                  data-leccion-search={`${l.titulo} ${l.subareaNombre ?? ''}`}
                   className="px-6 py-4 hover:bg-black/[0.02] transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -302,6 +305,7 @@ export default async function AdminLeccionesPage() {
               ))}
             </ul>
           )}
+          </LeccionesAdminSearch>
         </section>
       </div>
     </main>

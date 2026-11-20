@@ -35,6 +35,27 @@ body.focus-mode-active > footer {
   display: none !important;
 }
 
+body.reading-mode-active {
+  background: #1b2b42;
+}
+
+body.reading-mode-active > nav,
+body.reading-mode-active > footer,
+body.reading-mode-active > div.cookie-banner {
+  display: none !important;
+}
+
+.reading-page {
+  background:
+    radial-gradient(ellipse 75% 40% at 50% 0%, rgba(96, 165, 250, 0.08), transparent 70%),
+    linear-gradient(180deg, #1b2b42 0%, #172337 100%);
+}
+
+.reading-content {
+  color: #e2e8f0;
+  overflow-wrap: anywhere;
+}
+
 html {
   overflow-x: clip;
 }
@@ -128,6 +149,86 @@ html {
 .animate-slide-up {
   animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
+
+.dashboard-enter {
+  animation: dashboardEnter 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.dashboard-enter-delay-1 {
+  animation-delay: 60ms;
+}
+
+.dashboard-enter-delay-2 {
+  animation-delay: 110ms;
+}
+
+.dashboard-streak-icon {
+  animation: dashboardStreakIn 240ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.dashboard-card {
+  transition:
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.dashboard-map-card {
+  display: block;
+  border: 1px solid;
+  background: rgba(15, 23, 42, 0.2);
+  transition:
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.dashboard-action {
+  transition:
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 180ms ease;
+}
+
+.dashboard-action:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-card:hover {
+    transform: translateY(-2px) scale(1.005);
+  }
+
+  .dashboard-map-card:hover {
+    transform: translateY(-1px);
+  }
+
+  .dashboard-action:hover {
+    transform: translateY(-1px) scale(1.015);
+  }
+}
+
+@keyframes dashboardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dashboardStreakIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Glass mejorado con highlight interior */
 .glass-elevated {
   position: relative;

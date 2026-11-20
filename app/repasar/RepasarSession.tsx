@@ -174,7 +174,7 @@ export default function RepasarSession({
               es correcta.
             </p>
             <Link
-              href="/banco"
+              href="/simulador"
               className="inline-flex mt-5 bg-[#007AFF] hover:bg-[#0066DD] text-white text-sm font-semibold px-5 py-3 rounded-xl tap-scale transition-colors"
             >
               Seguir practicando

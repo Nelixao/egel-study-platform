@@ -30,7 +30,7 @@ export default function CookieBanner() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-md z-[100] animate-slide-up">
+    <div className="cookie-banner fixed bottom-4 left-4 right-4 z-[100] animate-slide-up md:left-auto md:right-6 md:max-w-md">
       <div className="glass-card-strong rounded-[22px] p-5 shadow-xl shadow-black/10 border border-black/5">
         <div className="flex items-start gap-3 mb-3">
           <div className="w-9 h-9 rounded-full bg-[#007AFF]/10 flex items-center justify-center flex-shrink-0">

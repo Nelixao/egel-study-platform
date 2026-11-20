@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { db } from '@/db';
-import { subareas, areas, preguntas, lecciones } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { areas, lecciones, subareas } from '@/db/schema';
 import VideoEmbed from '@/components/VideoEmbed';
+import LeccionesIndice from './LeccionesIndice';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -13,7 +12,6 @@ type Props = {
 
 export default async function SubareaPage({ params }: Props) {
   const { slug } = await params;
-
   const [subarea] = await db
     .select()
     .from(subareas)
@@ -22,30 +20,25 @@ export default async function SubareaPage({ params }: Props) {
 
   if (!subarea) notFound();
 
-  const areaId = subarea.areaId;
-  const [area] = areaId
+  const [area] = subarea.areaId
     ? await db
-      .select()
-      .from(areas)
-      .where(eq(areas.id, areaId))
-      .limit(1)
+        .select()
+        .from(areas)
+        .where(eq(areas.id, subarea.areaId))
+        .limit(1)
     : [null];
 
   const leccionesDeSubarea = await db
-    .select()
+    .select({
+      id: lecciones.id,
+      titulo: lecciones.titulo,
+    })
     .from(lecciones)
     .where(eq(lecciones.subareaId, subarea.id))
     .orderBy(asc(lecciones.orden), asc(lecciones.id));
 
-  const preguntasDeSubarea = await db
-    .select()
-    .from(preguntas)
-    .where(eq(preguntas.subareaId, subarea.id))
-    .orderBy(asc(preguntas.id));
-
   return (
-    <main className="bg-ios-canvas">
-      {/* Hero con gradiente */}
+    <main className="bg-ios-canvas min-h-screen">
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#4A8FE7] to-[#5856D6]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
@@ -53,193 +46,127 @@ export default async function SubareaPage({ params }: Props) {
         <div className="relative mx-auto max-w-3xl px-4 pb-12 pt-8 sm:px-6">
           <Link
             href={area ? `/area/${area.slug}` : '/'}
-            className="inline-flex items-center gap-1.5 text-sm text-white/90 hover:text-white mb-6 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md tap-scale"
+            className="mb-6 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white/15 px-3 text-sm text-white/90 backdrop-blur-md transition-colors hover:bg-white/20 hover:text-white"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             {area?.nombre || 'Inicio'}
           </Link>
 
-          <p className="text-xs font-semibold text-white/70 uppercase tracking-[0.15em]">
-            {area?.nombre}
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight mt-2">
+          {area?.nombre && (
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-white/70">
+              {area.nombre}
+            </p>
+          )}
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
             {subarea.nombre}
           </h1>
           {subarea.descripcion && (
-            <p className="text-white/85 mt-3 leading-relaxed max-w-2xl">
+            <p className="mt-3 max-w-2xl leading-relaxed text-white/85">
               {subarea.descripcion}
             </p>
           )}
-
-          <div className="flex flex-wrap gap-2 mt-5">
-            <span className="text-xs font-semibold bg-white/20 text-white backdrop-blur-md px-3 py-1.5 rounded-full">
-              {leccionesDeSubarea.length} {leccionesDeSubarea.length === 1 ? 'lección' : 'lecciones'}
-            </span>
-            <span className="text-xs font-semibold bg-white/20 text-white backdrop-blur-md px-3 py-1.5 rounded-full">
-              {preguntasDeSubarea.length} {preguntasDeSubarea.length === 1 ? 'pregunta' : 'preguntas'}
+          {subarea.temas && (
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/75">
+              {subarea.temas}
+            </p>
+          )}
+          <div className="mt-5 flex flex-wrap gap-2">
+            <span className="rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+              {leccionesDeSubarea.length}{' '}
+              {leccionesDeSubarea.length === 1 ? 'lección' : 'lecciones'}
             </span>
           </div>
         </div>
       </header>
 
       <div className="relative z-10 mx-auto -mt-6 max-w-3xl space-y-5 px-4 pb-16 sm:px-6">
-        {/* Índice de contenidos */}
-        {leccionesDeSubarea.length > 0 && (
-          <section className="glass-card-strong rounded-[22px] p-5 animate-slide-up">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-full bg-[#007AFF]/10 flex items-center justify-center">
-                <svg className="w-4 h-4 text-[#007AFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-                </svg>
-              </div>
-              <p className="text-sm font-semibold text-black/70 uppercase tracking-wide">
-                En esta lección
-              </p>
-
-            </div>
-            {/* Video explicativo */}
-            {subarea.videoUrl && (
-              <VideoEmbed url={subarea.videoUrl} titulo={`Video: ${subarea.nombre}`} />
-            )}
-            <ul className="space-y-1">
-              {leccionesDeSubarea.map((l, i) => (
-                <li key={l.id}>
-                  <a
-                    href={`#leccion-${l.id}`}
-                    className="group flex items-start gap-3 py-2 px-3 rounded-xl hover:bg-[#007AFF]/5 transition-colors"
-                  >
-                    <span className="text-xs font-mono text-[#007AFF] bg-[#007AFF]/10 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 font-semibold">
-                      {i + 1}
-                    </span>
-                    <span className="text-sm text-black group-hover:text-[#007AFF] transition-colors pt-1 font-medium">
-                      {l.titulo}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+        {subarea.videoUrl && (
+          <section className="glass-card-strong rounded-[22px] p-4 sm:p-5">
+            <VideoEmbed
+              url={subarea.videoUrl}
+              titulo={`Video: ${subarea.nombre}`}
+            />
           </section>
         )}
 
-        {/* Sin lecciones */}
-        {leccionesDeSubarea.length === 0 && (
-          <div className="glass-card-strong rounded-[22px] p-10 text-center animate-slide-up">
-            <div className="w-14 h-14 rounded-full bg-[#8E8E93]/10 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        {leccionesDeSubarea.length > 0 ? (
+          <LeccionesIndice slug={subarea.slug} lecciones={leccionesDeSubarea} />
+        ) : (
+          <section className="glass-card-strong rounded-[22px] p-8 text-center sm:p-10">
+            <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-cyan-300/10 text-cyan-200">
+              <svg
+                className="h-7 w-7"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.7}
+                  d="M12 6v12m6-6H6"
+                />
               </svg>
             </div>
-            <p className="text-[#8E8E93] font-medium">
-              Aún no hay lecciones para esta subárea
+            <h2 className="text-lg font-semibold text-white">
+              Aún no hay lecciones
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Cuando estén disponibles, aparecerán aquí para que puedas avanzar
+              a tu ritmo.
             </p>
-            <Link
-              href="/admin/lecciones"
-              className="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-[#007AFF] hover:underline"
-            >
-              Agregar la primera lección →
-            </Link>
-          </div>
+          </section>
         )}
 
-        {/* Lecciones */}
-        {leccionesDeSubarea.map((l, idx) => (
-          <article
-            key={l.id}
-            id={`leccion-${l.id}`}
-            className="glass-card-strong rounded-[22px] overflow-hidden scroll-mt-20 animate-slide-up"
-            style={{ animationDelay: `${idx * 60}ms` }}
-          >
-            <div className="px-6 md:px-8 pt-6 md:pt-7 pb-4 border-b border-black/[0.04]">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-xs font-mono font-semibold text-[#007AFF] bg-[#007AFF]/10 px-2.5 py-1 rounded-md">
-                  Lección {String(idx + 1).padStart(2, '0')}
-                </span>
-              </div>
-              <h2 className="text-xl md:text-2xl font-bold text-black tracking-tight">
-                {l.titulo}
-              </h2>
-            </div>
-
-                        <div className="lesson-content px-6 md:px-8 py-6 prose prose-invert max-w-none
-              prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-slate-100
-              prose-h1:text-2xl prose-h1:mt-6 prose-h1:mb-4
-              prose-h2:text-xl prose-h2:mt-7 prose-h2:mb-3 prose-h2:pb-2 prose-h2:border-b prose-h2:border-white/10
-              prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2 prose-h3:text-[#5AC8FA]
-              prose-p:leading-relaxed prose-p:text-slate-300 prose-p:my-3
-              prose-strong:text-white prose-strong:font-semibold
-              prose-code:bg-slate-800/80 prose-code:text-cyan-300 prose-code:border prose-code:border-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-[0.9em] prose-code:font-medium prose-code:before:content-none prose-code:after:content-none
-              prose-pre:bg-[#0F172A] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-2xl prose-pre:p-5 prose-pre:overflow-x-auto prose-pre:shadow-lg
-              prose-ul:my-4 prose-ul:pl-5 prose-li:my-1.5 prose-li:text-slate-300 prose-li:marker:text-[#5AC8FA]
-              prose-ol:my-4 prose-ol:pl-5
-              prose-blockquote:border-l-4 prose-blockquote:border-[#007AFF] prose-blockquote:bg-[#007AFF]/10 prose-blockquote:py-2 prose-blockquote:px-5 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-300 prose-blockquote:font-normal
-              prose-table:my-6 prose-table:w-full prose-table:text-sm prose-table:border-separate prose-table:border-spacing-0 prose-table:rounded-xl prose-table:overflow-hidden prose-table:border prose-table:border-white/10 prose-table:shadow-xl
-              prose-thead:bg-white/5 prose-th:px-5 prose-th:py-4 prose-th:text-left prose-th:font-semibold prose-th:text-slate-100
-              prose-td:px-5 prose-td:py-4 prose-td:text-slate-300 prose-td:border-t prose-td:border-white/5
-              prose-tr:transition-colors hover:prose-tr:bg-white/[0.02]
-              prose-hr:my-8 prose-hr:border-white/10
-              prose-a:text-[#5AC8FA] prose-a:font-medium prose-a:no-underline hover:prose-a:underline
-              prose-img:rounded-xl prose-img:shadow-md">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {l.contenido}
-              </ReactMarkdown>
-            </div>
-          </article>
-        ))}
-
-        {/* Sección de práctica */}
-        <section className="relative overflow-hidden rounded-[22px] p-6 md:p-8 text-white animate-slide-up">
+        <section className="relative overflow-hidden rounded-[22px] p-6 text-white sm:p-8">
           <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#4A8FE7] to-[#5856D6]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.2),transparent_60%)]" />
-
           <div className="relative">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-wide">
-                Práctica
-              </span>
-            </div>
-
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/75">
+              Repaso activo
+            </p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
               Pon a prueba lo aprendido
             </h2>
-            <p className="text-white/85 text-sm mb-6 max-w-md">
-              {preguntasDeSubarea.length} {preguntasDeSubarea.length === 1 ? 'pregunta disponible' : 'preguntas disponibles'} de esta subárea. Se seleccionarán al azar cada vez.
+            <p className="mb-6 mt-2 max-w-md text-sm leading-relaxed text-white/85">
+              Practica las preguntas relacionadas con esta subárea.
             </p>
-
             <Link
               href={`/simulador?subareas=${subarea.id}`}
-              className="inline-flex items-center gap-2 bg-white text-[#007AFF] font-semibold px-6 py-3.5 rounded-2xl hover:bg-white/95 tap-scale shadow-lg shadow-black/10"
+              className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-[#007AFF] shadow-lg shadow-black/10 transition-colors hover:bg-white/90"
             >
               Iniciar práctica
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
         </section>
-
-        {/* Preguntas disponibles */}
-        {preguntasDeSubarea.length > 0 && (
-          <section className="glass-card-strong rounded-[22px] overflow-hidden animate-slide-up">
-            <div className="px-6 pt-5 pb-3 border-b border-black/[0.04] flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-[#5856D6]/10 flex items-center justify-center">
-                <svg className="w-4 h-4 text-[#5856D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <p className="text-sm font-semibold text-black/70 uppercase tracking-wide">
-                Preguntas del banco
-              </p>
-            </div>
-
-
-
-
-
-          </section>
-        )}
       </div>
     </main>
   );
