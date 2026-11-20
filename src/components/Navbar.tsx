@@ -8,12 +8,14 @@ import { cerrarSesion } from '@/app/actions/auth';
 const publicLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/temario', label: 'Temario' },
+  { href: '/buscar', label: 'Buscar' },
   { href: '/simulador', label: 'Zona de Práctica' },
   { href: '/hoy', label: 'Hoy' },
 ];
 
 const adminLinks = [
   { href: '/admin', label: 'Panel' },
+  { href: '/buscar', label: 'Buscar' },
   { href: '/admin/lecciones', label: 'Lecciones' },
   { href: '/admin/videos', label: 'Videos' },
   { href: '/admin/preguntas', label: 'Preguntas' },
