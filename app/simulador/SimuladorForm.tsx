@@ -411,7 +411,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                 max={200}
                 value={cantidad}
                 onChange={(e) => setCantidad(Number(e.target.value))}
-                className="min-h-12 w-full bg-slate-900/80 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+                className="min-h-12 w-full bg-slate-800/80 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#007AFF]/50"
               />
             </div>
             <div>
@@ -440,7 +440,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                 max={240}
                 value={minutos}
                 onChange={(e) => setMinutos(Number(e.target.value))}
-                className="min-h-12 w-full bg-slate-900/80 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#007AFF]/50"
+                className="min-h-12 w-full bg-slate-800/80 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#007AFF]/50"
               />
             </div>
           </div>
@@ -527,21 +527,21 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
       <div
         className={
           modoEnfoque
-            ? 'fixed inset-0 z-[100] overflow-y-auto bg-slate-950 text-slate-100 transition-all duration-300'
+            ? 'focus-mode-scroll fixed inset-0 z-[100] h-[100dvh] overflow-y-auto bg-slate-800 text-slate-100'
             : 'space-y-5 transition-all duration-300'
         }
       >
         <div
           className={
             modoEnfoque
-              ? 'mx-auto min-h-screen w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-6'
+              ? 'mx-auto min-h-[100dvh] w-full max-w-6xl px-4 py-4 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-6'
               : 'space-y-5'
           }
         >
         <div
           className={`${
             modoEnfoque
-              ? 'mb-8 flex flex-col gap-4 rounded-[22px] border border-white/10 bg-slate-950/90 p-3 shadow-xl sm:flex-row sm:items-center sm:justify-between'
+              ? 'focus-mode-toolbar sticky z-30 mb-6 flex flex-col gap-4 rounded-[22px] border border-white/10 bg-slate-800/95 p-3 shadow-xl backdrop-blur-md sm:flex-row sm:items-center sm:justify-between'
               : 'sticky top-20 z-50 flex items-center justify-between rounded-[22px] border border-white/10 bg-slate-900/95 p-4 shadow-[0_12px_30px_rgba(15,23,42,0.45)] backdrop-blur-md'
           }`}
         >
@@ -599,16 +599,20 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
         <div
           className={`${
             modoEnfoque
-              ? 'mx-auto flex min-h-[calc(100vh-12rem)] w-full max-w-4xl flex-col justify-center'
+              ? 'mx-auto flex min-h-[calc(100dvh-10rem)] w-full max-w-4xl flex-col justify-start gap-6 py-2'
               : ''
           }`}
         >
-        <div className="mt-6 glass-card-strong rounded-[22px] p-6 md:p-8">
+        <div
+          className={`glass-card-strong rounded-[22px] p-5 sm:p-6 md:p-8 ${
+            modoEnfoque ? '' : 'mt-6'
+          }`}
+        >
           <p className="text-white font-medium text-lg leading-relaxed mb-6">
             {p.enunciado}
           </p>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {[
               { letra: 'A', texto: p.opcionA },
               { letra: 'B', texto: p.opcionB },
@@ -627,7 +631,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   key={op.letra}
                   onClick={() => responder(op.letra)}
                   disabled={modo === 'practica' && respuestas[p.id] !== undefined}
-                  className={`min-h-16 w-full text-left flex items-center gap-4 p-5 rounded-2xl border transition-all tap-scale ${
+                  className={`min-h-16 w-full text-left flex items-start gap-4 p-5 sm:p-6 rounded-2xl border transition-all tap-scale ${
                     opcionCorrectaEnPractica
                       ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.2)]'
                       : opcionIncorrectaEnPractica
@@ -638,7 +642,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   }`}
                 >
                   <span
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
+                    className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
                       opcionCorrectaEnPractica
                         ? 'bg-emerald-500 text-white'
                         : opcionIncorrectaEnPractica
@@ -650,7 +654,9 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
                   >
                     {op.letra}
                   </span>
-                  <span className="text-base text-white pt-1">{op.texto}</span>
+                  <span className="text-base leading-relaxed text-white md:text-lg">
+                    {op.texto}
+                  </span>
                 </button>
               );
             })}
@@ -684,7 +690,7 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           )}
         </div>
 
-        <div className="flex justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
           <button
             onClick={anterior}
             disabled={indice === 0}

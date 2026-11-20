@@ -129,12 +129,12 @@ export default function Flashcards({
       </div>
 
       {/* Tarjeta */}
-      <div className="glass-card-strong rounded-[22px] p-6 md:p-8 animate-slide-up">
+      <div className="glass-card-strong rounded-[22px] p-5 sm:p-6 md:p-8 animate-slide-up">
         <p className="text-lg font-medium text-white leading-relaxed mb-6">
           {p.enunciado}
         </p>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {[
             { letra: 'A', texto: p.opcionA },
             { letra: 'B', texto: p.opcionB },
@@ -163,10 +163,10 @@ export default function Flashcards({
                 onClick={() => elegir(op.letra)}
                 disabled={respondida}
                 aria-pressed={seleccionada}
-                className={`answer-option min-h-16 w-full text-left flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 active:scale-[0.99] tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
+                className={`answer-option min-h-16 w-full text-left flex items-start gap-4 p-5 sm:p-6 rounded-2xl border transition-all duration-300 active:scale-[0.99] tap-scale ${seleccionada ? 'answer-pulse' : ''} ${clase}`}
               >
                 <span
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
+                  className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all ${
                     respondida && esLaCorrecta
                       ? 'bg-emerald-500 text-white'
                       : respondida && seleccionada && !esLaCorrecta
@@ -188,7 +188,7 @@ export default function Flashcards({
                     op.letra
                   )}
                 </span>
-                <span className="text-base md:text-lg leading-relaxed text-white">
+                <span className="text-base leading-relaxed text-white md:text-lg">
                   {op.texto}
                 </span>
               </button>

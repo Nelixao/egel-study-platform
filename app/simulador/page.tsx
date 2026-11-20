@@ -27,7 +27,7 @@ export default async function SimuladorPage() {
   return (
     <main className="bg-ios-canvas min-h-screen">
       <header className="glass-nav sticky top-16 z-40">
-        <div className="max-w-3xl mx-auto px-5 py-6">
+        <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[#007AFF] hover:underline mb-3"
@@ -56,7 +56,7 @@ export default async function SimuladorPage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-5 py-8">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <SimuladorForm estructura={estructura} />
       </div>
     </main>

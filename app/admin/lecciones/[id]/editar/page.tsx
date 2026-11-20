@@ -6,6 +6,7 @@ import { db } from '@/db';
 import { subareas, areas, lecciones } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
 import { actualizarLeccion } from '@/app/actions/lecciones';
+import MarkdownEditor from '../../MarkdownEditor';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -38,7 +39,7 @@ export default async function EditarLeccionPage({ params }: Props) {
   return (
     <main className="bg-ios-canvas min-h-screen">
       <header className="glass-nav sticky top-16 z-40">
-        <div className="max-w-3xl mx-auto px-5 py-4">
+        <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
           <Link
             href="/admin/lecciones"
             className="mb-3 inline-block text-sm text-blue-300 hover:text-blue-200"
@@ -52,7 +53,7 @@ export default async function EditarLeccionPage({ params }: Props) {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-5 py-6">
+      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
         <form
           action={async (formData) => {
             'use server';
@@ -81,8 +82,8 @@ export default async function EditarLeccionPage({ params }: Props) {
             </select>
           </div>
 
-          <div className="px-5 py-4 grid grid-cols-3 gap-3">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 gap-3 px-5 py-4 sm:grid-cols-3">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-black mb-2">
                 Título
               </label>
@@ -108,15 +109,15 @@ export default async function EditarLeccionPage({ params }: Props) {
           </div>
 
           <div className="px-5 py-4">
-            <label className="block text-sm font-medium text-black mb-2">
-              Contenido (Markdown)
+            <label
+              htmlFor="contenido"
+              className="mb-2 block text-sm font-medium text-black"
+            >
+              Contenido de la lección
             </label>
-            <textarea
+            <MarkdownEditor
               name="contenido"
-              required
-              rows={20}
-              defaultValue={leccion.contenido}
-              className="w-full bg-[#F2F2F7] border-0 rounded-xl px-4 py-3 text-sm text-black font-mono focus:outline-none focus:ring-2 focus:ring-[#007AFF]/40 resize-y"
+              initialValue={leccion.contenido}
             />
           </div>
 

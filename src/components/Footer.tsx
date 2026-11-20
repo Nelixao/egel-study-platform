@@ -5,7 +5,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-black/[0.06] bg-white/60 backdrop-blur-xl mt-20">
-      <div className="max-w-6xl mx-auto px-5 md:px-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
         {/* Bloque principal */}
         <div className="py-14 grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
           {/* Marca - ocupa 5 columnas */}
@@ -69,10 +69,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/banco"
+                  href="/simulador"
                   className="text-sm text-black/65 hover:text-black transition-colors"
                 >
-                  Banco de preguntas
+                  Practicar preguntas
                 </Link>
               </li>
               <li>

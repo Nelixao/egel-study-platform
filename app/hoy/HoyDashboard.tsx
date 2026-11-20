@@ -141,7 +141,7 @@ export default function HoyDashboard({
   return (
     <main className="bg-ios-canvas min-h-screen">
       <header className="glass-nav">
-        <div className="max-w-4xl mx-auto px-5 py-8">
+        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
             Tu progreso
           </p>
@@ -154,7 +154,7 @@ export default function HoyDashboard({
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-5 py-8 space-y-6">
+      <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:px-6">
         <LogroModal
           abierto={mostrarCelebracion}
           titulo="¡Meta diaria cumplida!"

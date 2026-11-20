@@ -16,6 +16,11 @@
     "importar": "dotenv -e .env.local -- tsx scripts/importar.ts"
   },
   "dependencies": {
+    "@tiptap/extension-placeholder": "^3.34.0",
+    "@tiptap/extension-table": "^3.34.0",
+    "@tiptap/markdown": "^3.34.0",
+    "@tiptap/react": "^3.34.0",
+    "@tiptap/starter-kit": "^3.34.0",
     "cloudinary": "^2.11.0",
     "drizzle-orm": "^0.45.3",
     "next": "16.3.8",

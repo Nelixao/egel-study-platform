@@ -5,6 +5,7 @@ import { db } from '@/db';
 import { subareas, areas, lecciones } from '@/db/schema';
 import { asc, eq, desc } from 'drizzle-orm';
 import { crearLeccion, eliminarLeccion } from '@/app/actions/lecciones';
+import MarkdownEditor from './MarkdownEditor';
 
 export const metadata = {
   title: 'Lecciones — Admin',
@@ -49,7 +50,7 @@ export default async function AdminLeccionesPage() {
   return (
     <main className="bg-ios-canvas min-h-screen">
       <header className="glass-nav sticky top-16 z-40">
-        <div className="max-w-3xl mx-auto px-5 py-4">
+        <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-semibold text-black tracking-tight">
@@ -78,7 +79,7 @@ export default async function AdminLeccionesPage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-5 py-6 space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6">
         {/* Formulario de nueva lección */}
         <section className="glass-card-strong rounded-[22px] overflow-hidden">
           <div className="px-6 pt-5 pb-3 border-b border-black/[0.06] flex items-center gap-2">
@@ -157,31 +158,20 @@ export default async function AdminLeccionesPage() {
               </div>
             </div>
 
-            <div className="px-6 py-4">
-              <label className="block text-sm font-medium text-black mb-2">
-                Contenido (Markdown)
+            <div className="px-5 py-4 sm:px-6">
+              <label
+                htmlFor="contenido"
+                className="block text-sm font-medium text-black mb-2"
+              >
+                Contenido de la lección
               </label>
-              <textarea
+              <MarkdownEditor
                 name="contenido"
-                required
-                rows={14}
-                className="w-full bg-[#F2F2F7] border-0 rounded-xl px-4 py-3 text-sm text-black font-mono focus:outline-none focus:ring-2 focus:ring-[#007AFF]/40 resize-y"
-                placeholder={`# Título del tema
-
-Explicación del concepto...
-
-## Subtema
-
-- Punto 1
-- Punto 2
-
-**Concepto clave:** definición
-
-> Nota importante`}
+                placeholder="Escribe la explicación de la lección aquí…"
               />
               <p className="text-xs text-[#8E8E93] mt-2">
-                Acepta markdown: # títulos, **negritas**, - listas, tablas,
-                bloques de código.
+                Usa la barra de herramientas para dar formato, crear listas y
+                agregar tablas.
               </p>
             </div>
 

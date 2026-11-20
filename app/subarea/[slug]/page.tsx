@@ -50,7 +50,7 @@ export default async function SubareaPage({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#4A8FE7] to-[#5856D6]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
 
-        <div className="relative max-w-3xl mx-auto px-5 pt-8 pb-12">
+        <div className="relative mx-auto max-w-3xl px-4 pb-12 pt-8 sm:px-6">
           <Link
             href={area ? `/area/${area.slug}` : '/'}
             className="inline-flex items-center gap-1.5 text-sm text-white/90 hover:text-white mb-6 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md tap-scale"
@@ -84,7 +84,7 @@ export default async function SubareaPage({ params }: Props) {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-5 -mt-6 pb-16 space-y-5 relative z-10">
+      <div className="relative z-10 mx-auto -mt-6 max-w-3xl space-y-5 px-4 pb-16 sm:px-6">
         {/* Índice de contenidos */}
         {leccionesDeSubarea.length > 0 && (
           <section className="glass-card-strong rounded-[22px] p-5 animate-slide-up">

@@ -43,7 +43,7 @@ export default function Navbar() {
         desplazado ? 'glass-nav-scrolled' : ''
       }`}
     >
-      <div className="max-w-6xl mx-auto px-5">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"

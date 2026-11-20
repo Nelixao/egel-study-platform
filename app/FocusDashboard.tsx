@@ -162,7 +162,7 @@ export default function FocusDashboard({
 
   return (
     <main className="bg-ios-canvas-v2 min-h-screen">
-      <div className="mx-auto max-w-5xl px-5 py-10 md:py-14">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 md:py-14">
         <section className="glass-elevated rounded-[28px] p-6 md:p-9">
           <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
             <div className="max-w-2xl">
@@ -285,7 +285,7 @@ export default function FocusDashboard({
                         : undefined,
                   }}
                 >
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-slate-900 text-[10px] font-bold text-cyan-200">
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-slate-800 text-[10px] font-bold text-cyan-200">
                     {Math.round(porcentajeMeta)}%
                   </span>
                 </div>
