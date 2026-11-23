@@ -1,6 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  obtenerProgresoPorSubarea,
+  type PrecisionSubarea,
+} from '@/lib/progreso';
 
 type Tema = {
   id: string;
@@ -310,73 +314,89 @@ const transversales: Area[] = [
   },
 ];
 
+const slugsPorSubarea: Record<string, string[]> = {
+  '1-1': ['circuitos'],
+  '1-2': ['arquitectura'],
+  '1-3': ['embebidos'],
+  '1-4': ['automatizacion'],
+  '2-1': ['diseno-redes'],
+  '2-2': ['admin-redes'],
+  '2-3': ['seguridad-redes'],
+  '3-1': ['ing-software'],
+  '3-2': ['programacion'],
+  '3-3': ['datos-algoritmos'],
+  'comp-lectora': ['comp-estudio', 'comp-literario', 'comp-social'],
+  'redac-indirecta': ['redac-estudio', 'redac-social'],
+};
+
+type ResumenSubarea = {
+  total: number;
+  correctas: number;
+  precision: number;
+};
+
+function resumirSlugs(
+  slugs: string[],
+  progreso: PrecisionSubarea[]
+): ResumenSubarea {
+  const porSlug = new Map(progreso.map((resultado) => [resultado.subareaSlug, resultado]));
+  const resumen = slugs.reduce(
+    (total, slug) => {
+      const resultado = porSlug.get(slug);
+      return resultado
+        ? {
+            total: total.total + resultado.total,
+            correctas: total.correctas + resultado.correctas,
+          }
+        : total;
+    },
+    { total: 0, correctas: 0 }
+  );
+
+  return {
+    ...resumen,
+    precision:
+      resumen.total > 0
+        ? Math.round((resumen.correctas / resumen.total) * 100)
+        : 0,
+  };
+}
+
+function resumirArea(area: Area, progreso: PrecisionSubarea[]) {
+  return resumirSlugs(
+    area.subareas.flatMap((subarea) => slugsPorSubarea[subarea.id] ?? []),
+    progreso
+  );
+}
+
 export default function TemarioInteractivo() {
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-  const [hidratado, setHidratado] = useState(false);
+  const [progreso, setProgreso] = useState<PrecisionSubarea[]>([]);
 
   useEffect(() => {
-    let activo = true;
-
-    async function hidratarProgreso() {
-      await Promise.resolve();
-      if (!activo) return;
-
-      const guardado = localStorage.getItem('temario-progreso-v1');
-      if (guardado) {
-        try {
-          setChecked(JSON.parse(guardado));
-        } catch {
-          // ignorar
-        }
-      }
-      setHidratado(true);
+    function actualizarProgreso() {
+      setProgreso(obtenerProgresoPorSubarea());
     }
 
-    void hidratarProgreso();
+    actualizarProgreso();
+    window.addEventListener(
+      'egel-study-platform:progreso-actualizado',
+      actualizarProgreso
+    );
     return () => {
-      activo = false;
+      window.removeEventListener(
+        'egel-study-platform:progreso-actualizado',
+        actualizarProgreso
+      );
     };
   }, []);
 
-  useEffect(() => {
-    if (hidratado) {
-      localStorage.setItem('temario-progreso-v1', JSON.stringify(checked));
-    }
-  }, [checked, hidratado]);
-
-  function toggle(id: string) {
-    setChecked((prev) => ({ ...prev, [id]: !prev[id] }));
-  }
-
-  function contarTemas(area: Area) {
-    return area.subareas.reduce((acc, sub) => acc + sub.temas.length, 0);
-  }
-
-  function contarCompletados(area: Area) {
-    return area.subareas.reduce(
-      (acc, sub) => acc + sub.temas.filter((t) => checked[t.id]).length,
-      0
-    );
-  }
-
-  const totalTemas = useMemo(() => {
-    const disciplinar = areas.reduce((acc, a) => acc + contarTemas(a), 0);
-    const trans = transversales.reduce((acc, a) => acc + contarTemas(a), 0);
-    return disciplinar + trans;
-  }, []);
-
-  const totalCompletados =
-    areas.reduce((acc, a) => acc + contarCompletados(a), 0) +
-    transversales.reduce((acc, a) => acc + contarCompletados(a), 0);
-
-  const porcentajeGlobal =
-    totalTemas > 0 ? Math.round((totalCompletados / totalTemas) * 100) : 0;
-
-  function reiniciar() {
-    if (confirm('¿Reiniciar todo el progreso? Esta acción no se puede deshacer.')) {
-      setChecked({});
-    }
-  }
+  const todasLasAreas = [...areas, ...transversales];
+  const progresoGlobal = resumirSlugs(
+    todasLasAreas.flatMap((area) =>
+      area.subareas.flatMap((subarea) => slugsPorSubarea[subarea.id] ?? [])
+    ),
+    progreso
+  );
 
   return (
     <div className="space-y-8">
@@ -385,29 +405,22 @@ export default function TemarioInteractivo() {
         <div className="flex items-center justify-between mb-5 gap-4 flex-wrap">
           <div>
             <p className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-[0.14em]">
-              Progreso general
+              Precisión general
             </p>
             <p className="text-4xl font-bold text-black tracking-tight mt-1.5 tabular-nums">
-              {porcentajeGlobal}
+              {progresoGlobal.precision}
               <span className="text-xl text-black/30 ml-0.5">%</span>
             </p>
             <p className="text-xs text-black/50 mt-1.5">
-              {totalCompletados} de {totalTemas} temas dominados
+              {progresoGlobal.correctas} de {progresoGlobal.total} respuestas correctas
             </p>
           </div>
-
-          <button
-            onClick={reiniciar}
-            className="text-xs font-semibold text-black/40 hover:text-[#FF3B30] px-3 py-2 rounded-xl hover:bg-[#FF3B30]/10 transition-all tap-scale"
-          >
-            Reiniciar progreso
-          </button>
         </div>
 
         <div className="h-2.5 bg-black/[0.05] rounded-full overflow-hidden shadow-inner">
           <div
             className="h-full rounded-full bg-gradient-to-r from-[#007AFF] via-[#4A8FE7] to-[#5856D6] transition-all duration-700 ease-out relative"
-            style={{ width: `${porcentajeGlobal}%` }}
+            style={{ width: `${progresoGlobal.precision}%` }}
           >
             <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent rounded-full" />
           </div>
@@ -468,8 +481,7 @@ export default function TemarioInteractivo() {
             <AreaBlock
               key={area.id}
               area={area}
-              checked={checked}
-              onToggle={toggle}
+              progreso={progreso}
             />
           ))}
         </div>
@@ -494,8 +506,7 @@ export default function TemarioInteractivo() {
             <AreaBlock
               key={area.id}
               area={area}
-              checked={checked}
-              onToggle={toggle}
+              progreso={progreso}
             />
           ))}
         </div>
@@ -506,21 +517,13 @@ export default function TemarioInteractivo() {
 
 function AreaBlock({
   area,
-  checked,
-  onToggle,
+  progreso,
 }: {
   area: Area;
-  checked: Record<string, boolean>;
-  onToggle: (id: string) => void;
+  progreso: PrecisionSubarea[];
 }) {
   const [expandida, setExpandida] = useState(false);
-  const totalTemas = area.subareas.reduce((acc, s) => acc + s.temas.length, 0);
-  const completados = area.subareas.reduce(
-    (acc, s) => acc + s.temas.filter((t) => checked[t.id]).length,
-    0
-  );
-  const porcentaje =
-    totalTemas > 0 ? Math.round((completados / totalTemas) * 100) : 0;
+  const resumen = resumirArea(area, progreso);
 
   return (
     <div className="glass-elevated rounded-[24px] overflow-hidden">
@@ -562,11 +565,11 @@ function AreaBlock({
 
           <span className="text-right flex-shrink-0">
             <span className="block text-3xl font-bold text-black tracking-tight tabular-nums">
-              {porcentaje}
+              {resumen.precision}
               <span className="text-base text-black/30 ml-0.5">%</span>
             </span>
             <span className="block text-[11px] text-black/40 font-medium tabular-nums">
-              {completados} / {totalTemas}
+              {resumen.correctas} / {resumen.total} correctas
             </span>
           </span>
         </span>
@@ -575,7 +578,7 @@ function AreaBlock({
           <span
             className="h-full rounded-full transition-all duration-700 ease-out"
             style={{
-              width: `${porcentaje}%`,
+              width: `${resumen.precision}%`,
               background: `linear-gradient(90deg, ${area.color}, ${area.color}DD)`,
             }}
           />
@@ -606,8 +609,7 @@ function AreaBlock({
             <SubareaBlock
               key={sub.id}
               subarea={sub}
-              checked={checked}
-              onToggle={onToggle}
+              progreso={progreso}
               color={area.color}
             />
           ))}
@@ -619,17 +621,14 @@ function AreaBlock({
 
 function SubareaBlock({
   subarea,
-  checked,
-  onToggle,
+  progreso,
   color,
 }: {
   subarea: Subarea;
-  checked: Record<string, boolean>;
-  onToggle: (id: string) => void;
+  progreso: PrecisionSubarea[];
   color: string;
 }) {
-  const completados = subarea.temas.filter((t) => checked[t.id]).length;
-  const total = subarea.temas.length;
+  const resumen = resumirSlugs(slugsPorSubarea[subarea.id] ?? [], progreso);
 
   return (
     <div className="px-6 py-5">
@@ -639,7 +638,7 @@ function SubareaBlock({
         </h4>
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-[11px] font-semibold text-black/50 tabular-nums">
-            {completados}/{total}
+            {resumen.precision}% · {resumen.correctas}/{resumen.total}
           </span>
           <span
             className="text-[10px] font-semibold px-2 py-0.5 rounded-md border"
@@ -654,73 +653,43 @@ function SubareaBlock({
         </div>
       </div>
 
-      <ul className="space-y-1">
-        {subarea.temas.map((tema) => {
-          const activo = !!checked[tema.id];
-          return (
-            <li key={tema.id}>
-              <button
-                type="button"
-                onClick={() => onToggle(tema.id)}
-                className={`w-full text-left flex items-start gap-3 p-3 rounded-2xl transition-all duration-200 group ${
-                  activo
-                    ? 'bg-[#34C759]/[0.06]'
-                    : 'hover:bg-black/[0.03]'
-                }`}
-              >
-                <span
-                  className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200 check-glow ${
-                    activo
-                      ? 'bg-gradient-to-br from-[#34C759] to-[#2FB350] shadow-md shadow-[#34C759]/25'
-                      : 'bg-white/80 border border-black/15 group-hover:border-black/30 backdrop-blur-sm'
-                  }`}
-                >
-                  {activo && (
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={3}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
-                </span>
+      <div
+        className="mb-4 h-2 overflow-hidden rounded-full bg-slate-200"
+        role="progressbar"
+        aria-label={`Precisión en ${subarea.nombre}`}
+        aria-valuenow={resumen.precision}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div
+          className="h-full rounded-full bg-emerald-500 transition-[width] duration-300 ease-out"
+          style={{ width: `${resumen.precision}%` }}
+        />
+      </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      className={`text-sm font-medium transition-all duration-200 ${
-                        activo
-                          ? 'text-black/40 line-through decoration-black/20'
-                          : 'text-black'
-                      }`}
-                    >
-                      {tema.nombre}
-                    </span>
-                    {tema.explicado && (
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-[#34C759]/15 text-[#34C759] border border-[#34C759]/20">
-                        Contenido disponible
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className={`text-xs mt-0.5 leading-relaxed transition-all duration-200 ${
-                      activo ? 'text-black/30' : 'text-black/50'
-                    }`}
-                  >
-                    {tema.subtemas}
-                  </p>
-                </div>
-              </button>
-            </li>
-          );
-        })}
+      <ul className="space-y-1">
+        {subarea.temas.map((tema) => (
+          <li
+            key={tema.id}
+            className="flex items-start gap-3 rounded-2xl p-3"
+          >
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-medium text-black">
+                  {tema.nombre}
+                </span>
+                {tema.explicado && (
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-[#34C759]/15 text-[#34C759] border border-[#34C759]/20">
+                    Contenido disponible
+                  </span>
+                )}
+              </div>
+              <p className="mt-0.5 text-xs leading-relaxed text-black/50">
+                {tema.subtemas}
+              </p>
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   );

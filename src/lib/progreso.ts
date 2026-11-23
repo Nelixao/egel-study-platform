@@ -212,6 +212,10 @@ export function calcularEstadisticas(
   };
 }
 
+export function obtenerProgresoPorSubarea(): PrecisionSubarea[] {
+  return calcularEstadisticas(obtenerIntentos()).precisionPorSubarea;
+}
+
 export function calcularLogros(intentos: Intento[]): Logro[] {
   const intentosValidos = intentos.filter(esIntento);
   const estadisticas = calcularEstadisticas(intentosValidos);

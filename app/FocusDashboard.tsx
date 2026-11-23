@@ -6,6 +6,7 @@ import {
   calcularEstadisticas,
   obtenerIntentos,
   obtenerMetaDiaria,
+  obtenerProgresoPorSubarea,
 } from '@/lib/progreso';
 
 const FORMATO_CLAVE_DIA = new Intl.DateTimeFormat('en-CA', {
@@ -87,7 +88,7 @@ export default function FocusDashboard({
       setMetaDiaria(obtenerMetaDiaria());
       setPrecisionPorSlug(
         Object.fromEntries(
-          estadisticas.precisionPorSubarea.map((resultado) => [
+          obtenerProgresoPorSubarea().map((resultado) => [
             resultado.subareaSlug,
             resultado.precision,
           ])
@@ -443,10 +444,11 @@ export default function FocusDashboard({
             subareasVisibles.length > 0 ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {subareasVisibles.map((subarea) => {
-                  const precision = precisionPorSlug[subarea.slug];
+                  const precision = precisionPorSlug[subarea.slug] ?? 0;
+                  const practicada = subarea.slug in precisionPorSlug;
                   const perimetro = 100.53;
                   const desplazamiento =
-                    perimetro * (1 - (precision ?? 0) / 100);
+                    perimetro * (1 - precision / 100);
                   const indice = subareas.findIndex(
                     (elemento) => elemento.slug === subarea.slug
                   );
@@ -461,7 +463,7 @@ export default function FocusDashboard({
                           ? `${subarea.lecciones} lecciones y ${subarea.preguntas} preguntas`
                           : 'sin contenido todavía'
                       }${
-                        precision === undefined
+                        !practicada
                           ? ''
                           : `, ${precision}% de respuestas correctas`
                       }`}
@@ -482,7 +484,7 @@ export default function FocusDashboard({
                           className="relative grid h-10 w-10 shrink-0 place-items-center"
                           role="img"
                           aria-label={
-                            precision === undefined
+                            !practicada
                               ? `${subarea.nombre}: aún no practicada`
                               : `${subarea.nombre}: ${precision}% de respuestas correctas`
                           }
@@ -505,9 +507,7 @@ export default function FocusDashboard({
                               cy="20"
                               r="16"
                               fill="none"
-                              stroke={
-                                precision === undefined ? 'transparent' : '#34d399'
-                              }
+                              stroke={practicada ? '#34d399' : 'transparent'}
                               strokeWidth="3"
                               strokeLinecap="round"
                               strokeDasharray={perimetro}
@@ -516,7 +516,7 @@ export default function FocusDashboard({
                             />
                           </svg>
                           <span className="text-[9px] font-bold tabular-nums text-slate-300">
-                            {precision === undefined ? '—' : `${precision}%`}
+                            {precision}%
                           </span>
                         </span>
                       </div>

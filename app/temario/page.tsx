@@ -18,9 +18,8 @@ export default function TemarioPage() {
             EGEL Plus ICOMPU
           </h1>
           <p className="text-slate-400 mt-3 max-w-2xl leading-relaxed">
-            Estructura oficial del examen con seguimiento de progreso. Marca
-            cada tema cuando lo domines; tu avance se guarda automáticamente en
-            este navegador.
+            Estructura del examen con seguimiento automático de tu precisión al
+            responder preguntas en cada subárea.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
