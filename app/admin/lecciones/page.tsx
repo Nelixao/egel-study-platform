@@ -6,7 +6,7 @@ import { subareas, areas, lecciones } from '@/db/schema';
 import { asc, eq, desc } from 'drizzle-orm';
 import { crearLeccion, eliminarLeccion } from '@/app/actions/lecciones';
 import MarkdownEditor from './MarkdownEditor';
-import LeccionesAdminSearch from './LeccionesAdminSearch';
+import AdminListFilters from '../AdminListFilters';
 
 export const metadata = {
   title: 'Lecciones — Admin',
@@ -29,6 +29,7 @@ export default async function AdminLeccionesPage() {
       id: lecciones.id,
       titulo: lecciones.titulo,
       orden: lecciones.orden,
+      subareaId: lecciones.subareaId,
       subareaNombre: subareas.nombre,
       areaNombre: areas.nombre,
     })
@@ -215,7 +216,11 @@ export default async function AdminLeccionesPage() {
             </span>
           </div>
 
-          <LeccionesAdminSearch total={todasLasLecciones.length}>
+          <AdminListFilters
+            total={todasLasLecciones.length}
+            plural="lecciones"
+            subareas={todasSubareas.map(({ id, nombre }) => ({ id, nombre }))}
+          >
           {todasLasLecciones.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <p className="text-sm text-[#8E8E93]">
@@ -227,7 +232,9 @@ export default async function AdminLeccionesPage() {
               {todasLasLecciones.map((l) => (
                 <li
                   key={l.id}
-                  data-leccion-search={`${l.titulo} ${l.subareaNombre ?? ''}`}
+                  data-admin-filter-row
+                  data-search={`${l.titulo} ${l.subareaNombre ?? ''} ${l.areaNombre ?? ''}`}
+                  data-subarea={l.subareaId ?? ''}
                   className="px-6 py-4 hover:bg-black/[0.02] transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -255,7 +262,7 @@ export default async function AdminLeccionesPage() {
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <Link
                         href={`/admin/lecciones/${l.id}/editar`}
-                        className="inline-flex items-center gap-1 text-xs font-medium text-[#007AFF] hover:bg-[#007AFF]/10 px-2.5 py-1.5 rounded-lg transition-colors"
+                        className="inline-flex min-h-12 items-center gap-1 rounded-lg px-3 text-xs font-medium text-[#007AFF] transition-[transform,background-color] duration-150 hover:bg-[#007AFF]/10 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
                       >
                         <svg
                           className="w-3.5 h-3.5"
@@ -305,7 +312,7 @@ export default async function AdminLeccionesPage() {
               ))}
             </ul>
           )}
-          </LeccionesAdminSearch>
+          </AdminListFilters>
         </section>
       </div>
     </main>

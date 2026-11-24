@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { TableKit } from '@tiptap/extension-table';
@@ -20,6 +20,7 @@ export default function MarkdownEditor({
 }: MarkdownEditorProps) {
   const [markdown, setMarkdown] = useState(initialValue);
   const [mostrarError, setMostrarError] = useState(false);
+  const contenidoRef = useRef<HTMLInputElement>(null);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -41,6 +42,7 @@ export default function MarkdownEditor({
     onUpdate: ({ editor: currentEditor }) => {
       const contenido = currentEditor.getMarkdown();
       setMarkdown(contenido);
+      if (contenidoRef.current) contenidoRef.current.value = contenido;
       if (contenido.trim()) setMostrarError(false);
     },
   });
@@ -205,7 +207,12 @@ export default function MarkdownEditor({
         aria-hidden="true"
         className="sr-only"
       />
-      <input type="hidden" name={name} value={markdown} />
+      <input
+        ref={contenidoRef}
+        type="hidden"
+        name={name}
+        defaultValue={initialValue}
+      />
       {mostrarError && (
         <p className="px-4 pb-3 text-sm text-rose-300" role="alert">
           Escribe el contenido de la lección antes de guardar.

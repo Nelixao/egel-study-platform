@@ -5,8 +5,8 @@ import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { subareas, areas, lecciones } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
-import { actualizarLeccion } from '@/app/actions/lecciones';
 import MarkdownEditor from '../../MarkdownEditor';
+import FormularioEditarLeccion from './FormularioEditarLeccion';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -37,12 +37,12 @@ export default async function EditarLeccionPage({ params }: Props) {
     .orderBy(asc(areas.orden), asc(subareas.id));
 
   return (
-    <main className="bg-ios-canvas min-h-screen">
+    <main className="bg-ios-canvas min-h-screen animate-slide-up">
       <header className="glass-nav sticky top-16 z-40">
         <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
           <Link
             href="/admin/lecciones"
-            className="mb-3 inline-block text-sm text-blue-300 hover:text-blue-200"
+            className="mb-3 inline-flex min-h-12 items-center text-sm text-blue-300 transition-colors hover:text-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
           >
             ← Volver a lecciones
           </Link>
@@ -54,13 +54,7 @@ export default async function EditarLeccionPage({ params }: Props) {
       </header>
 
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-        <form
-          action={async (formData) => {
-            'use server';
-            await actualizarLeccion(formData);
-          }}
-          className="glass-card-strong rounded-[20px] overflow-hidden divide-y divide-white/10"
-        >
+        <FormularioEditarLeccion>
           <input type="hidden" name="id" value={leccion.id} />
 
           <div className="px-5 py-4">
@@ -121,21 +115,7 @@ export default async function EditarLeccionPage({ params }: Props) {
             />
           </div>
 
-          <div className="px-5 py-4 flex gap-3">
-            <button
-              type="submit"
-              className="flex-1 rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/15 transition hover:brightness-110 tap-scale"
-            >
-              Guardar cambios
-            </button>
-            <Link
-              href="/admin/lecciones"
-              className="rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 font-medium text-slate-200 transition hover:bg-white/10 tap-scale"
-            >
-              Cancelar
-            </Link>
-          </div>
-        </form>
+        </FormularioEditarLeccion>
       </div>
     </main>
   );

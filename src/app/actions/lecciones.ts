@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { lecciones } from '@/db/schema';
+import { lecciones, subareas } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth-guard';
@@ -73,6 +73,34 @@ export async function actualizarLeccion(formData: FormData) {
     return { error: 'Faltan campos obligatorios' };
   }
 
+  const [leccionAnterior] = await db
+    .select({ subareaId: lecciones.subareaId })
+    .from(lecciones)
+    .where(eq(lecciones.id, id))
+    .limit(1);
+
+  if (!leccionAnterior) {
+    return { error: 'No se encontró la lección' };
+  }
+
+  const [subareaNueva] = await db
+    .select({ slug: subareas.slug })
+    .from(subareas)
+    .where(eq(subareas.id, subareaId))
+    .limit(1);
+
+  if (!subareaNueva) {
+    return { error: 'No se encontró la subárea seleccionada' };
+  }
+
+  const [subareaAnterior] = leccionAnterior.subareaId
+    ? await db
+        .select({ slug: subareas.slug })
+        .from(subareas)
+        .where(eq(subareas.id, leccionAnterior.subareaId))
+        .limit(1)
+    : [null];
+
   const resultado = await db
     .update(lecciones)
     .set({ subareaId, titulo, contenido, orden })
@@ -85,6 +113,10 @@ export async function actualizarLeccion(formData: FormData) {
 
   revalidatePath('/admin/lecciones');
   revalidatePath('/admin/lecciones/' + id + '/editar');
-  revalidatePath('/subarea/[slug]', 'page');
+  for (const slug of new Set([subareaAnterior?.slug, subareaNueva.slug])) {
+    if (!slug) continue;
+    revalidatePath(`/subarea/${slug}`);
+    revalidatePath(`/subarea/${slug}/${id}`);
+  }
   return { success: true };
 }

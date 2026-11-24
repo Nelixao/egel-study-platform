@@ -6,6 +6,7 @@ import { subareas, areas, preguntas } from '@/db/schema';
 import { asc, eq, desc } from 'drizzle-orm';
 import { crearPregunta } from '@/app/actions/preguntas';
 import EliminarPreguntaButton from './EliminarPreguntaButton';
+import AdminListFilters from '../AdminListFilters';
 
 export default async function AdminPreguntasPage() {
   const todasSubareas = await db
@@ -24,12 +25,12 @@ export default async function AdminPreguntasPage() {
       enunciado: preguntas.enunciado,
       respuestaCorrecta: preguntas.respuestaCorrecta,
       dificultad: preguntas.dificultad,
+      subareaId: preguntas.subareaId,
       subareaNombre: subareas.nombre,
     })
     .from(preguntas)
     .leftJoin(subareas, eq(preguntas.subareaId, subareas.id))
-    .orderBy(desc(preguntas.id))
-    .limit(10);
+    .orderBy(desc(preguntas.id));
 
   return (
     <main className="min-h-screen bg-ios-canvas">
@@ -179,10 +180,20 @@ export default async function AdminPreguntasPage() {
         <section className="glass-card-strong rounded-[20px] overflow-hidden">
           <div className="px-5 pt-5 pb-3 border-b border-white/10">
             <h2 className="text-sm font-semibold text-[#8E8E93] uppercase tracking-wide">
-              Últimas 10 agregadas
+              Banco de preguntas
             </h2>
           </div>
 
+          <AdminListFilters
+            total={ultimasPreguntas.length}
+            plural="preguntas"
+            subareas={todasSubareas.map(({ id, nombre }) => ({ id, nombre }))}
+            dificultades={[
+              { id: 'facil', nombre: 'Fácil' },
+              { id: 'media', nombre: 'Media' },
+              { id: 'dificil', nombre: 'Difícil' },
+            ]}
+          >
           {ultimasPreguntas.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <p className="text-sm text-[#8E8E93]">
@@ -200,7 +211,14 @@ export default async function AdminPreguntasPage() {
                 const color = colores[p.dificultad || 'media'] || 'bg-[#8E8E93]';
 
                 return (
-                  <li key={p.id} className="px-5 py-4 hover:bg-white/[0.03] transition-colors">
+                  <li
+                    key={p.id}
+                    data-admin-filter-row
+                    data-search={`${p.enunciado} ${p.subareaNombre ?? ''}`}
+                    data-subarea={p.subareaId ?? ''}
+                    data-difficulty={p.dificultad ?? 'media'}
+                    className="px-5 py-4 transition-colors hover:bg-white/[0.03]"
+                  >
                     <div className="flex items-start gap-3">
                       <div className={`w-2 h-2 rounded-full ${color} mt-2 flex-shrink-0`} />
                       <div className="flex-1 min-w-0">
@@ -224,7 +242,7 @@ export default async function AdminPreguntasPage() {
                       <div className="flex shrink-0 items-center gap-1">
                         <Link
                           href={`/admin/preguntas/${p.id}/editar`}
-                          className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-blue-300 transition hover:bg-blue-400/10"
+                          className="inline-flex min-h-12 items-center rounded-lg px-3 text-xs font-medium text-blue-300 transition-colors hover:bg-blue-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-300"
                         >
                           Editar
                         </Link>
@@ -236,6 +254,7 @@ export default async function AdminPreguntasPage() {
               })}
             </ul>
           )}
+          </AdminListFilters>
         </section>
 
         {/* Info footer estilo iOS */}
