@@ -242,7 +242,7 @@ export default async function AdminPreguntasPage() {
                       <div className="flex shrink-0 items-center gap-1">
                         <Link
                           href={`/admin/preguntas/${p.id}/editar`}
-                          className="inline-flex min-h-12 items-center rounded-lg px-3 text-xs font-medium text-blue-300 transition-colors hover:bg-blue-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-300"
+                          className="inline-flex min-h-12 items-center rounded-lg px-3 text-xs font-medium text-blue-300 transition-[transform,background-color] duration-150 hover:bg-blue-400/10 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-300"
                         >
                           Editar
                         </Link>

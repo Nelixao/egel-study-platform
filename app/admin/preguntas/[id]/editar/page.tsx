@@ -36,12 +36,12 @@ export default async function EditarPreguntaPage({ params }: Props) {
     .orderBy(asc(areas.orden), asc(subareas.id));
 
   return (
-    <main className="bg-ios-canvas min-h-screen">
+    <main className="bg-ios-canvas min-h-screen animate-slide-up">
       <header className="glass-nav sticky top-16 z-40">
         <div className="mx-auto max-w-3xl px-5 py-5">
           <Link
             href="/admin/preguntas"
-            className="mb-3 inline-flex text-sm font-medium text-blue-300 hover:text-blue-200"
+            className="mb-3 inline-flex min-h-12 items-center text-sm font-medium text-blue-300 transition-colors hover:text-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
           >
             Volver a preguntas
           </Link>
