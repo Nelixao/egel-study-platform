@@ -8,6 +8,7 @@ import { cerrarSesion } from '@/app/actions/auth';
 const publicLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/temario', label: 'Temario' },
+  { href: '/juegos', label: 'Juegos' },
   { href: '/buscar', label: 'Buscar' },
   { href: '/simulador', label: 'Zona de Práctica' },
   { href: '/hoy', label: 'Hoy' },
