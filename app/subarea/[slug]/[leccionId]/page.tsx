@@ -89,6 +89,7 @@ export default async function LeccionPage({ params }: Props) {
   return (
     <LectorLeccion
       slug={subarea.slug}
+      subareaId={subarea.id}
       subareaNombre={subarea.nombre}
       leccionId={leccionActual.id}
       titulo={leccionActual.titulo}

@@ -8,6 +8,7 @@ import {
   obtenerMetaDiaria,
   obtenerProgresoPorSubarea,
 } from '@/lib/progreso';
+import { guardarPracticaPendiente } from '@/lib/practica-pendiente';
 
 const FORMATO_CLAVE_DIA = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'America/Mexico_City',
@@ -187,11 +188,12 @@ export default function FocusDashboard({
               </p>
 
               <Link
-                href={
-                  subareaParaContinuar
-                    ? `/simulador?subareas=${subareaParaContinuar.id}&iniciar=practica`
-                    : '/simulador'
-                }
+                href="/simulador"
+                onClick={() => {
+                  if (subareaParaContinuar) {
+                    guardarPracticaPendiente([subareaParaContinuar.id]);
+                  }
+                }}
                 className="dashboard-action group relative mt-8 inline-flex min-h-14 w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-400 px-7 py-4 text-base font-bold text-white shadow-[0_14px_38px_-12px_rgba(99,102,241,0.72)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 sm:w-auto sm:text-lg"
               >
                 <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />

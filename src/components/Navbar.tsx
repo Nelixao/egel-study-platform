@@ -12,6 +12,7 @@ const publicLinks = [
   { href: '/buscar', label: 'Buscar' },
   { href: '/simulador', label: 'Zona de Práctica' },
   { href: '/hoy', label: 'Hoy' },
+  { href: '/estadisticas', label: 'Estadísticas' },
 ];
 
 const adminLinks = [
@@ -70,12 +71,28 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`nav-link min-h-[48px] flex items-center px-3.5 py-1.5 text-sm rounded-full transition-all duration-300 font-medium ${
+                  className={`nav-link min-h-[48px] flex items-center gap-1.5 px-3.5 py-1.5 text-sm rounded-full transition-all duration-300 font-medium ${
                     activo
                       ? 'nav-link-active text-blue-300 shadow-inner'
                       : 'text-slate-300 hover:text-white'
                   }`}
                 >
+                  {link.href === '/estadisticas' && (
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 19V5m0 14h17M8 15v-4m4 4V7m4 8v-6m4 6V4"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
                   {link.label}
                 </Link>
               );
@@ -141,12 +158,28 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuAbierto(false)}
-                  className={`nav-mobile-link block min-h-[48px] px-4 py-3 text-base rounded-xl transition-colors font-medium ${
+                  className={`nav-mobile-link flex min-h-[48px] items-center gap-2 px-4 py-3 text-base rounded-xl transition-colors font-medium ${
                     activo
                       ? 'bg-blue-400/10 text-blue-300'
                       : 'text-slate-300 hover:bg-slate-800'
                   }`}
                 >
+                  {link.href === '/estadisticas' && (
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 19V5m0 14h17M8 15v-4m4 4V7m4 8v-6m4 6V4"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
                   {link.label}
                 </Link>
               );

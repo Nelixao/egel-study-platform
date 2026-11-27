@@ -14,6 +14,7 @@ import {
 } from '@/lib/progreso';
 import Pomodoro from '@/components/Pomodoro';
 import LogroModal from '@/components/LogroModal';
+import { guardarPracticaPendiente } from '@/lib/practica-pendiente';
 
 type Subarea = {
   id: number;
@@ -272,7 +273,10 @@ export default function HoyDashboard({
                 ayudarte a avanzar.
               </p>
               <Link
-                href={`/simulador?subareas=${recomendacionConIntentos.id}&iniciar=practica`}
+                href="/simulador"
+                onClick={() =>
+                  guardarPracticaPendiente([recomendacionConIntentos.id])
+                }
                 className="interactive-glow inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(99,102,241,0.55)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(139,92,246,0.55)] active:scale-[0.97]"
               >
                 Practicar ahora
@@ -292,7 +296,10 @@ export default function HoyDashboard({
                 una subárea según tus resultados.
               </p>
               <Link
-                href={`/simulador?subareas=${recomendacionInicial.id}&iniciar=practica`}
+                href="/simulador"
+                onClick={() =>
+                  guardarPracticaPendiente([recomendacionInicial.id])
+                }
                 className="interactive-glow inline-flex min-h-14 items-center justify-center gap-3 mt-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-7 py-4 text-base font-semibold text-white shadow-[0_12px_32px_-12px_rgba(99,102,241,0.55)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(139,92,246,0.55)] active:scale-[0.97]"
               >
                 Practicar ahora

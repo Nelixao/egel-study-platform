@@ -5,6 +5,7 @@ import { db } from '@/db';
 import { areas, lecciones, subareas } from '@/db/schema';
 import VideoEmbed from '@/components/VideoEmbed';
 import LeccionesIndice from './LeccionesIndice';
+import PracticarSubareaLink from './PracticarSubareaLink';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -145,26 +146,7 @@ export default async function SubareaPage({ params }: Props) {
             <p className="mb-6 mt-2 max-w-md text-sm leading-relaxed text-white/85">
               Practica las preguntas relacionadas con esta subárea.
             </p>
-            <Link
-              href={`/simulador?subareas=${subarea.id}`}
-              className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-[#007AFF] shadow-lg shadow-black/10 transition-colors hover:bg-white/90"
-            >
-              Iniciar práctica
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2.5}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Link>
+            <PracticarSubareaLink subareaId={subarea.id} />
           </div>
         </section>
       </div>

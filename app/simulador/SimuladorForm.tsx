@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { obtenerPreguntasAleatorias } from '@/app/actions/simulador';
 import { guardarIntento } from '@/lib/progreso';
@@ -26,7 +25,6 @@ type Modo = 'practica' | 'examen';
 type Fase = 'config' | Modo | 'resultado';
 
 export default function SimuladorForm({ estructura }: { estructura: Seccion[] }) {
-  const searchParams = useSearchParams();
   const [fase, setFase] = useState<Fase>('config');
   const [modo, setModo] = useState<Modo>('examen');
   const [subareasSel, setSubareasSel] = useState<number[]>([]);
@@ -124,11 +122,42 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
   useEffect(() => {
     let activo = true;
 
-    async function aplicarParametros() {
+    async function aplicarPracticaPendiente() {
       await Promise.resolve();
       if (!activo) return;
 
-      const subareaParam = searchParams.get('subareas');
+      let valorGuardado: string | null;
+      try {
+        valorGuardado = window.localStorage.getItem('practica-pendiente');
+        if (valorGuardado === null) return;
+        window.localStorage.removeItem('practica-pendiente');
+      } catch {
+        setError(
+          'No pudimos leer la práctica pendiente. Revisa el almacenamiento de este navegador.'
+        );
+        return;
+      }
+
+      let practicaPendiente: unknown;
+      try {
+        practicaPendiente = JSON.parse(valorGuardado);
+      } catch {
+        setError('La práctica pendiente no tiene un formato válido.');
+        return;
+      }
+
+      if (
+        !practicaPendiente ||
+        typeof practicaPendiente !== 'object' ||
+        !('subareas' in practicaPendiente) ||
+        !Array.isArray(practicaPendiente.subareas) ||
+        !('iniciar' in practicaPendiente) ||
+        typeof practicaPendiente.iniciar !== 'boolean'
+      ) {
+        setError('La práctica pendiente no tiene un formato válido.');
+        return;
+      }
+
       const idsDisponibles = new Set(
         estructura.flatMap((seccion) =>
           seccion.areas.flatMap((area) =>
@@ -136,44 +165,36 @@ export default function SimuladorForm({ estructura }: { estructura: Seccion[] })
           )
         )
       );
-      let subareasSolicitadas: number[] = [];
-      if (subareaParam) {
-        subareasSolicitadas = [
-          ...new Set(
-            subareaParam
-              .split(',')
-              .map((valor) => Number(valor.trim()))
-              .filter(
-                (id) => Number.isSafeInteger(id) && idsDisponibles.has(id)
-              )
-          ),
-        ];
-        if (subareasSolicitadas.length > 0) {
-          setSubareasSel(subareasSolicitadas);
-          setCantidad(10);
-        } else if (searchParams.get('iniciar') === 'practica') {
-          setError('No encontramos subáreas disponibles para iniciar la práctica.');
-          return;
-        }
+      const subareasSolicitadas = [
+        ...new Set(
+          practicaPendiente.subareas.filter(
+            (id): id is number =>
+              typeof id === 'number' &&
+              Number.isSafeInteger(id) &&
+              idsDisponibles.has(id)
+          )
+        ),
+      ];
+
+      if (subareasSolicitadas.length === 0) {
+        setError('No encontramos subáreas disponibles para iniciar la práctica.');
+        return;
       }
 
-      if (
-        searchParams.get('iniciar') === 'practica' &&
-        !inicioAutomaticoRef.current
-      ) {
+      setSubareasSel(subareasSolicitadas);
+      setCantidad(10);
+
+      if (practicaPendiente.iniciar && !inicioAutomaticoRef.current) {
         inicioAutomaticoRef.current = true;
-        await iniciar(
-          'practica',
-          subareasSolicitadas.length ? subareasSolicitadas : undefined
-        );
+        await iniciar('practica', subareasSolicitadas);
       }
     }
 
-    void aplicarParametros();
+    void aplicarPracticaPendiente();
     return () => {
       activo = false;
     };
-  }, [iniciar, searchParams, estructura]);
+  }, [iniciar, estructura]);
 
   useEffect(() => {
     if (fase !== 'examen') return;
